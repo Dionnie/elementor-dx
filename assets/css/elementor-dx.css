@@ -1,0 +1,52 @@
+#dx-custom-context-menu {
+  position: fixed;
+  z-index: 999999; /* Ensure it stays above Elementor popovers */
+  background: #ffffff;
+  border: 1px solid #d5dadf;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2px;
+  font-family: Roboto, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+#dx-custom-context-menu.dx-hidden {
+  display: none;
+}
+
+.dx-menu-item {
+  padding: 8px 8px;
+  cursor: pointer;
+  color: #495157;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.dx-menu-item:hover {
+  background-color: #f0abfc;
+  color: #1a1a1a;
+}
+
+.dx-css-toolbar {
+  margin-top: 4px;
+}
+
+.dx-css-btn {
+  display: inline-block;
+  color: #1a1a1a;
+  margin: 2px;
+  padding: 4px 8px;
+  background-color: #f4f6f7;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.dx-css-btn:hover {
+  background-color: #f0abfc;
+}
