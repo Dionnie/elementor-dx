@@ -1,24 +1,21 @@
 class ElementorDXSpacing {
   constructor() {
     this.spacingVars = [
-      { label: "Space 1 (4px)", shortLabel: "4", value: "var(--space-1)" },
-      { label: "Space 2 (8px)", shortLabel: "8", value: "var(--space-2)" },
-      { label: "Space 3 (12px)", shortLabel: "12", value: "var(--space-3)" },
-      { label: "Space 4 (16px)", shortLabel: "16", value: "var(--space-4)" },
-      { label: "Space 6 (24px)", shortLabel: "24", value: "var(--space-6)" },
-      { label: "Space 8 (32px)", shortLabel: "32", value: "var(--space-8)" },
-      { label: "Space 10 (40px)", shortLabel: "40", value: "var(--space-10)" },
-      { label: "Space 12 (48px)", shortLabel: "48", value: "var(--space-12)" },
-      { label: "Space 16 (64px)", shortLabel: "64", value: "var(--space-16)" },
-      { label: "Space 24 (96px)", shortLabel: "96", value: "var(--space-24)" },
-      {
-        label: "Space 32 (128px)",
-        shortLabel: "128",
-        value: "var(--space-32)",
-      },
+      { scale: "1", px: "4", value: "var(--space-1)" },
+      { scale: "2", px: "8", value: "var(--space-2)" },
+      { scale: "3", px: "12", value: "var(--space-3)" },
+      { scale: "4", px: "16", value: "var(--space-4)" },
+      { scale: "6", px: "24", value: "var(--space-6)" },
+      { scale: "8", px: "32", value: "var(--space-8)" },
+      { scale: "10", px: "40", value: "var(--space-10)" },
+      { scale: "12", px: "48", value: "var(--space-12)" },
+      { scale: "16", px: "64", value: "var(--space-16)" },
+      { scale: "24", px: "96", value: "var(--space-24)" },
+      { scale: "32", px: "128", value: "var(--space-32)" },
     ];
 
     this.currentTargetInput = null;
+    this.currentActiveUnit = null; // Store the unit found during right-click
     this.init();
   }
 
@@ -36,14 +33,14 @@ class ElementorDXSpacing {
       #dx-custom-context-menu {
         position: fixed;
         z-index: 99999;
-        background: #fff;
-        border: 1px solid #c2cbd2;
-        border-radius: 4px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        padding: 8px;
+        background: #ffffff;
+        border: 1px solid #e1e4e8;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        padding: 6px;
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 2px;
+        gap: 4px;
         width: max-content;
       }
       #dx-custom-context-menu.dx-hidden {
@@ -51,24 +48,36 @@ class ElementorDXSpacing {
       }
       .dx-menu-item {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 25px;
-        height: 25px;
-        background: #f4f6f7;
-        border: 1px solid #d5dadf;
+        width: 38px;
+        height: 38px;
+        background: transparent;
+        border: 1px solid transparent;
         border-radius: 4px;
-        font-size: 11px;
-        font-weight: 500;
-        color: #495157;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.15s ease;
         user-select: none;
       }
       .dx-menu-item:hover {
-        background: #e1e8ed;
-        border-color: #a4afb7;
-        color: #000;
+        background: #f4f5f7;
+        border-color: #d1d5da;
+      }
+      .dx-top-text {
+        font-size: 12px;
+        font-weight: 600;
+        color: #24292e;
+        pointer-events: none;
+        line-height: 1;
+        margin-bottom: 3px;
+      }
+      .dx-bottom-text {
+        font-size: 9px;
+        font-weight: 400;
+        color: #6a737d;
+        pointer-events: none;
+        line-height: 1;
       }
     `;
     document.head.appendChild(style);
@@ -82,36 +91,52 @@ class ElementorDXSpacing {
     this.spacingVars.forEach((v) => {
       const item = document.createElement("div");
       item.classList.add("dx-menu-item");
-      item.innerText = v.shortLabel;
       item.dataset.val = v.value;
-      item.title = v.label;
+
+      item.title = `${v.px}px (Space ${v.scale})`;
+
+      item.innerHTML = `
+        <span class="dx-top-text">${v.px}px</span>
+        <span class="dx-bottom-text">${v.scale}</span>
+      `;
 
       item.addEventListener("click", (e) => {
-        if (this.currentTargetInput) {
-          if (this.currentTargetInput.type === "number") {
+        const targetVal = e.currentTarget.dataset.val;
+        const token = this.spacingVars.find((t) => t.value === targetVal);
+
+        if (this.currentTargetInput && token) {
+          let finalValue = token.value; // Default to var
+
+          // Apply value based on the unit we detected on right-click
+          if (this.currentActiveUnit === "px") {
+            finalValue = token.px;
+          } else if (this.currentActiveUnit === "rem") {
+            finalValue = (parseInt(token.px, 10) / 16).toString();
+          } else if (this.currentActiveUnit === "custom") {
+            finalValue = token.value;
+          }
+
+          // Switch input type to text if we are injecting a CSS variable string
+          if (
+            this.currentTargetInput.type === "number" &&
+            this.currentActiveUnit === "custom"
+          ) {
             this.currentTargetInput.type = "text";
           }
 
-          this.currentTargetInput.value = e.target.dataset.val;
+          // Inject the value and trigger Elementor's save events
+          this.currentTargetInput.value = finalValue;
           this.currentTargetInput.dispatchEvent(
             new Event("input", { bubbles: true }),
           );
           this.currentTargetInput.dispatchEvent(
             new Event("change", { bubbles: true }),
           );
-
-          const controlContent = this.currentTargetInput.closest(
-            ".elementor-control-content",
-          );
-          if (controlContent) {
-            const customUnit = controlContent.querySelector(
-              'label[data-choose="custom"], .elementor-units-choices label[data-choose="custom"]',
-            );
-            if (customUnit) customUnit.click();
-          }
         }
+
         this.hideMenu(menu);
       });
+
       menu.appendChild(item);
     });
 
@@ -122,10 +147,37 @@ class ElementorDXSpacing {
         e.target.closest("#elementor-panel") &&
         e.target.matches("input[data-setting]")
       ) {
+        // 1. Find the parent control container
+        const controlContainer = e.target.closest(".elementor-control");
+        if (!controlContainer) return;
+
+        // 2. Look for the active unit using Elementor's new switcher structure
+        const unitSwitcher =
+          controlContainer.querySelector(".e-units-switcher");
+        let activeUnit = "custom"; // Assume custom if no switcher exists (e.g., standard text fields)
+
+        if (unitSwitcher) {
+          activeUnit = unitSwitcher.dataset.selected || "custom";
+        } else {
+          // Fallback for older Elementor DOM or different control types
+          const checkedRadio = controlContainer.querySelector(
+            'input[data-setting="unit"]:checked',
+          );
+          if (checkedRadio) activeUnit = checkedRadio.value;
+        }
+
+        // 3. Disable menu if the unit is not applicable
+        const allowedUnits = ["px", "rem", "custom"];
+        if (!allowedUnits.includes(activeUnit)) {
+          return; // Do nothing. The native browser right-click menu will appear.
+        }
+
+        // 4. If applicable, prevent default and show our menu
         e.preventDefault();
         this.currentTargetInput = e.target;
+        this.currentActiveUnit = activeUnit; // Save the unit for the click event
 
-        const menuWidth = 140;
+        const menuWidth = 180;
         const xPos =
           e.clientX + menuWidth > window.innerWidth
             ? window.innerWidth - menuWidth
@@ -147,6 +199,7 @@ class ElementorDXSpacing {
   hideMenu(menuElement) {
     menuElement.classList.add("dx-hidden");
     this.currentTargetInput = null;
+    this.currentActiveUnit = null;
   }
 }
 

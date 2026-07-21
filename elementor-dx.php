@@ -59,10 +59,49 @@ class Elementor_DX_Core
 
         // Explicitly load the files from the includes folder safely
         require_once ELEMENTOR_DX_PATH . 'includes/class-elementor-dx-api.php';
+        require_once ELEMENTOR_DX_PATH . 'includes/class-elementor-dx-god-mode-api.php';
 
         // Hook into Elementor's editor scripts
         add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_scripts']);
+
+        // 3. Hook into the Frontend
+        add_action('wp_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
+
+        // 4. Hook into the Elementor Editor
+        add_action('elementor/editor/after_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
     }
+
+    // 2. Enqueue the JavaScript UI & Localization
+    function elementor_dx_enqueue_god_mode()
+    {
+
+        // Security check: Only load God Mode for users who can edit posts
+        if (! current_user_can('edit_posts')) {
+            return;
+        }
+
+        // Register and enqueue the script
+        // Use get_stylesheet_directory_uri() instead of plugin_dir_url() if using a theme
+        wp_enqueue_script(
+            'elementor-dx-god-mode-js',
+            plugin_dir_url(__FILE__) . 'assets/js/elementor-dx-god-mode.js',
+            [], // No dependencies needed
+            '1.0.0',
+            true // Load in footer
+        );
+
+        // Pass the REST API root URL and Nonce to the JavaScript file
+        wp_localize_script(
+            'elementor-dx-god-mode-js',
+            'elementorDxSettings',
+            [
+                'root'  => esc_url_raw(rest_url()),
+                'nonce' => wp_create_nonce('wp_rest'),
+            ]
+        );
+    }
+
+
 
     /**
      * Enqueue scripts and styles only in the Elementor Editor.
@@ -77,6 +116,8 @@ class Elementor_DX_Core
             [],
             '1.0.0'
         );
+
+
 
         // --- 2. Spacing Context Menu JS ---
         wp_enqueue_script(
