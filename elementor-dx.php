@@ -146,6 +146,15 @@ class Elementor_DX_Core
             true
         );
 
+        // --- 4. Colors Manager JS ---
+        wp_enqueue_script(
+            'elementor-dx-typography-importer',
+            ELEMENTOR_DX_URL . 'assets/js/elementor-dx-typography-importer.js',
+            ['jquery'],
+            '1.0.0',
+            true
+        );
+
         // Pass REST API variables to the Colors Manager JS
         wp_localize_script(
             'elementor-dx-color-importer',
