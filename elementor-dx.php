@@ -66,9 +66,6 @@ class Elementor_DX_Core
 
         // 3. Hook into the Frontend
         add_action('wp_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
-
-        // 4. Hook into the Elementor Editor
-        add_action('elementor/editor/after_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
     }
 
     // 2. Enqueue the JavaScript UI & Localization
