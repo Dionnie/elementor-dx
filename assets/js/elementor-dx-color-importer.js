@@ -38,6 +38,7 @@ class ElementorDXColorImporter {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <h4 style="margin:0; color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">Custom Colors</h4>
         <div style="display:flex; gap:4px;">
+          <button id="dx-btn-prompt" style="background:transparent; border:1px solid #555; color:#3498db; padding:2px 6px; cursor:pointer; border-radius:2px; font-size:10px;" title="Copy AI Prompt to Clipboard">🤖 AI Prompt</button>
           <button id="dx-btn-refresh" style="background:transparent; border:1px solid #555; color:#aaa; padding:2px 6px; cursor:pointer; border-radius:2px; font-size:10px;" title="Refresh from API">🔄 Refresh</button>
           <button id="dx-btn-clear" style="background:transparent; border:1px solid #555; color:#e74c3c; padding:2px 6px; cursor:pointer; border-radius:2px; font-size:10px;" title="Clear Workspace">🗑️ Clear</button>
           <button id="dx-btn-backup" style="background:transparent; border:1px solid #555; color:#aaa; padding:2px 6px; cursor:pointer; border-radius:2px; font-size:10px;" title="Download Backup">📥 Backup</button>
@@ -55,7 +56,7 @@ class ElementorDXColorImporter {
 
         <!-- Workspace: UI -->
         <div id="dx-view-ui" style="display:block;">
-          <div id="dx-color-grid" style="display:flex; flex-wrap:wrap; gap:6px; max-height:110px; overflow-y:auto; margin-bottom:8px; padding:4px 0;"></div>
+          <div id="dx-color-grid" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; padding:4px 0;"></div>
           <div style="display:flex; gap:8px; font-size:10px; color:#aaa; align-items:center;">
             <span>Copy on click:</span>
             <label style="cursor:pointer;"><input type="radio" name="dx-copy" value="hex" checked style="margin:0;"> Hex</label>
@@ -88,6 +89,66 @@ class ElementorDXColorImporter {
     const btnBackup = document.getElementById("dx-btn-backup");
     const btnRefresh = document.getElementById("dx-btn-refresh");
     const btnClear = document.getElementById("dx-btn-clear");
+    const btnPrompt = document.getElementById("dx-btn-prompt");
+
+    // Copy AI Prompt
+    btnPrompt.onclick = (e) => {
+      e.preventDefault();
+      const aiPrompt = `Generate a complete design token color palette from my brand colors.
+
+Requirements:
+- Use Tailwind CSS's 50–950 tonal scale.
+- The color(s) I provide are ALWAYS the 500 shade.
+- Generate realistic lighter (50–400) and darker (600–950) shades, not opacity variations.
+- Output colors using rgba(r, g, b, 1), NOT hex.
+- Do NOT include comments.
+- Do NOT include explanations.
+- Do NOT include markdown.
+- Do NOT include ids.
+- Return ONLY a valid JSON array.
+
+Output format:
+
+[
+  {
+    "title": "color-primary-50",
+    "color": "rgba(239, 247, 253, 1)"
+  },
+  {
+    "title": "color-primary-100",
+    "color": "rgba(219, 236, 248, 1)"
+  }
+]
+
+Naming convention:
+- Primary: color-primary-50 ... color-primary-950
+- Accent: color-accent-50 ... color-accent-950
+- Accent 2: color-accent-2-50 ... color-accent-2-950
+- Neutral: color-neutral-50 ... color-neutral-950
+
+Special rule for black and white:
+- color-black-* and color-white-* should use opacity instead of tonal shades.
+- Example:
+  color-black-50 = rgba(0,0,0,0.05)
+  ...
+  color-black-950 = rgba(0,0,0,1)
+
+  color-white-50 = rgba(255,255,255,0.05)
+  ...
+  color-white-950 = rgba(255,255,255,1)
+
+My brand colors are:
+Primary: #0B5189
+Accent: #F40600
+Accent 2: #EBD52B`;
+
+      navigator.clipboard
+        .writeText(aiPrompt)
+        .then(() =>
+          this.showStatus("AI Prompt copied to clipboard!", "success"),
+        )
+        .catch(() => this.showStatus("Failed to copy prompt.", "error"));
+    };
 
     // Refresh from API
     btnRefresh.onclick = async (e) => {
