@@ -15,7 +15,7 @@ class ElementorDXSpacing {
     ];
 
     this.currentTargetInput = null;
-    this.currentActiveUnit = null; // Store the unit found during right-click
+    this.currentActiveUnit = null;
     this.init();
   }
 
@@ -32,50 +32,78 @@ class ElementorDXSpacing {
     style.textContent = `
       #dx-custom-context-menu {
         position: fixed;
-        z-index: 99999;
-        background: #ffffff;
-        border: 1px solid #e1e4e8;
+        z-index: 999999;
+        background: #2b2b2b;
+        border: 1px solid #444;
         border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        padding: 6px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        width: max-content;
+        font-family: sans-serif;
+        opacity: 0;
+        visibility: hidden;
+        transform: scale(0.95);
+        transform-origin: top left;
+        transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s;
+      }
+      #dx-custom-context-menu.dx-active {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+      }
+      .dx-spacing-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        font-weight: bold;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        border-bottom: 1px solid #444;
+        pointer-events: none;
+      }
+      .dx-spacing-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 4px;
-        width: max-content;
-      }
-      #dx-custom-context-menu.dx-hidden {
-        display: none !important;
       }
       .dx-menu-item {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 38px;
-        height: 38px;
-        background: transparent;
-        border: 1px solid transparent;
+        width: 42px;
+        height: 42px;
+        background: #222;
+        border: 1px solid #444;
         border-radius: 4px;
         cursor: pointer;
-        transition: all 0.15s ease;
+        transition: all 0.2s;
         user-select: none;
       }
       .dx-menu-item:hover {
-        background: #f4f5f7;
-        border-color: #d1d5da;
+        background: #333;
+        border-color: #aaa;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
       }
       .dx-top-text {
         font-size: 12px;
         font-weight: 600;
-        color: #24292e;
+        color: #fff;
         pointer-events: none;
         line-height: 1;
-        margin-bottom: 3px;
+        margin-bottom: 4px;
       }
       .dx-bottom-text {
         font-size: 9px;
-        font-weight: 400;
-        color: #6a737d;
+        font-weight: 500;
+        color: #888;
         pointer-events: none;
         line-height: 1;
       }
@@ -86,18 +114,33 @@ class ElementorDXSpacing {
   setupSpacingContextMenu() {
     const menu = document.createElement("div");
     menu.id = "dx-custom-context-menu";
-    menu.classList.add("dx-hidden");
+
+    // Header
+    const header = document.createElement("div");
+    header.className = "dx-spacing-header";
+    header.innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+      </svg>
+      Spacing Tokens
+    `;
+    menu.appendChild(header);
+
+    // Grid Container
+    const grid = document.createElement("div");
+    grid.className = "dx-spacing-grid";
 
     this.spacingVars.forEach((v) => {
       const item = document.createElement("div");
       item.classList.add("dx-menu-item");
       item.dataset.val = v.value;
-
-      item.title = `${v.px}px (Space ${v.scale})`;
+      item.title = `Apply ${v.px}px (Space ${v.scale})`;
 
       item.innerHTML = `
-        <span class="dx-top-text">${v.px}px</span>
-        <span class="dx-bottom-text">${v.scale}</span>
+        <span class="dx-top-text">${v.px}</span>
+        <span class="dx-bottom-text">Sp ${v.scale}</span>
       `;
 
       item.addEventListener("click", (e) => {
@@ -105,22 +148,22 @@ class ElementorDXSpacing {
         const token = this.spacingVars.find((t) => t.value === targetVal);
 
         if (this.currentTargetInput && token) {
-          let finalValue = token.value; // Default to var
+          let finalValue = token.value;
 
-          // Apply value based on the unit we detected on right-click
+          // Apply value based strictly on the active unit
           if (this.currentActiveUnit === "px") {
             finalValue = token.px;
-          } else if (this.currentActiveUnit === "rem") {
+          } else if (
+            this.currentActiveUnit === "rem" ||
+            this.currentActiveUnit === "em"
+          ) {
             finalValue = (parseInt(token.px, 10) / 16).toString();
           } else if (this.currentActiveUnit === "custom") {
             finalValue = token.value;
           }
 
           // Switch input type to text if we are injecting a CSS variable string
-          if (
-            this.currentTargetInput.type === "number" &&
-            this.currentActiveUnit === "custom"
-          ) {
+          if (this.currentTargetInput.type === "number" && isNaN(finalValue)) {
             this.currentTargetInput.type = "text";
           }
 
@@ -137,9 +180,10 @@ class ElementorDXSpacing {
         this.hideMenu(menu);
       });
 
-      menu.appendChild(item);
+      grid.appendChild(item);
     });
 
+    menu.appendChild(grid);
     document.body.appendChild(menu);
 
     document.addEventListener("contextmenu", (e) => {
@@ -151,41 +195,52 @@ class ElementorDXSpacing {
         const controlContainer = e.target.closest(".elementor-control");
         if (!controlContainer) return;
 
-        // 2. Look for the active unit using Elementor's new switcher structure
+        // 2. Look for the active unit using Elementor's switcher structure
         const unitSwitcher =
           controlContainer.querySelector(".e-units-switcher");
-        let activeUnit = "custom"; // Assume custom if no switcher exists (e.g., standard text fields)
+        const legacyUnitRadio = controlContainer.querySelector(
+          'input[data-setting="unit"]:checked',
+        );
+
+        let activeUnit = null; // Default to null to prevent popping up on z-index, opacity, etc.
 
         if (unitSwitcher) {
-          activeUnit = unitSwitcher.dataset.selected || "custom";
-        } else {
-          // Fallback for older Elementor DOM or different control types
-          const checkedRadio = controlContainer.querySelector(
-            'input[data-setting="unit"]:checked',
-          );
-          if (checkedRadio) activeUnit = checkedRadio.value;
+          activeUnit = unitSwitcher.dataset.selected;
+        } else if (legacyUnitRadio) {
+          activeUnit = legacyUnitRadio.value;
         }
 
-        // 3. Disable menu if the unit is not applicable
-        const allowedUnits = ["px", "rem", "custom"];
+        // 3. If there is no unit switcher UI at all, abort entirely.
+        if (!activeUnit) return;
+
+        // 4. Validate against spacing-compatible units.
+        const allowedUnits = ["px", "rem", "em", "custom"];
         if (!allowedUnits.includes(activeUnit)) {
-          return; // Do nothing. The native browser right-click menu will appear.
+          return;
         }
 
-        // 4. If applicable, prevent default and show our menu
+        // 5. Conditions met: prevent default menu and show ours
         e.preventDefault();
         this.currentTargetInput = e.target;
-        this.currentActiveUnit = activeUnit; // Save the unit for the click event
+        this.currentActiveUnit = activeUnit;
 
-        const menuWidth = 180;
-        const xPos =
-          e.clientX + menuWidth > window.innerWidth
-            ? window.innerWidth - menuWidth
-            : e.clientX;
+        // Boundary collision detection to prevent menu from clipping off-screen
+        const menuWidth = 200;
+        const menuHeight = 180;
 
-        menu.style.top = `${e.clientY}px`;
+        let xPos = e.clientX;
+        let yPos = e.clientY;
+
+        if (xPos + menuWidth > window.innerWidth) {
+          xPos = window.innerWidth - menuWidth - 10;
+        }
+        if (yPos + menuHeight > window.innerHeight) {
+          yPos = window.innerHeight - menuHeight - 10;
+        }
+
+        menu.style.top = `${yPos}px`;
         menu.style.left = `${xPos}px`;
-        menu.classList.remove("dx-hidden");
+        menu.classList.add("dx-active");
       }
     });
 
@@ -197,7 +252,7 @@ class ElementorDXSpacing {
   }
 
   hideMenu(menuElement) {
-    menuElement.classList.add("dx-hidden");
+    menuElement.classList.remove("dx-active");
     this.currentTargetInput = null;
     this.currentActiveUnit = null;
   }

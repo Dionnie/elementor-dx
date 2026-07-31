@@ -61,7 +61,7 @@ class Elementor_DX_Core
         require_once ELEMENTOR_DX_PATH . 'includes/class-elementor-dx-api.php';
         require_once ELEMENTOR_DX_PATH . 'includes/class-elementor-dx-god-mode-api.php';
         add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_scripts']);
-        //  add_action('wp_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
+        add_action('wp_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
     }
 
     // 2. Enqueue the JavaScript UI & Localization
