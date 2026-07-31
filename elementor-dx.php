@@ -57,15 +57,11 @@ class Elementor_DX_Core
             return;
         }
 
-        // Explicitly load the files from the includes folder safely
+
         require_once ELEMENTOR_DX_PATH . 'includes/class-elementor-dx-api.php';
         require_once ELEMENTOR_DX_PATH . 'includes/class-elementor-dx-god-mode-api.php';
-
-        // Hook into Elementor's editor scripts
         add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_scripts']);
-
-        // 3. Hook into the Frontend
-        add_action('wp_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
+        //  add_action('wp_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
     }
 
     // 2. Enqueue the JavaScript UI & Localization
@@ -106,13 +102,6 @@ class Elementor_DX_Core
     public function enqueue_editor_scripts()
     {
 
-        // --- 1. Main Styles ---
-        wp_enqueue_style(
-            'elementor-dx',
-            ELEMENTOR_DX_URL . 'assets/css/elementor-dx.css',
-            [],
-            '1.0.0'
-        );
 
 
 
