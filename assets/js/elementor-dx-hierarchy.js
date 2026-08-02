@@ -33,6 +33,8 @@ class ElementorDXHierarchyLens {
     // Inject the CSS filter overlay
     const lens = doc.createElement("div");
     lens.id = this.lensId;
+
+    // CHANGED: Lowered z-index to 99900 so it sits under the plugin UI tools
     lens.style.cssText = `
       position: fixed;
       top: 0;
@@ -40,7 +42,7 @@ class ElementorDXHierarchyLens {
       width: 100vw;
       height: 100vh;
       pointer-events: none; /* Crucial: lets you click elements under the filter */
-      z-index: 999996; /* Sits just below the wireframe and grid overlays */
+      z-index: 99900; /* Safely under Radial Menu (99998) and UI Windows (99999+) */
       backdrop-filter: grayscale(100%) contrast(115%);
       -webkit-backdrop-filter: grayscale(100%) contrast(115%);
     `;
