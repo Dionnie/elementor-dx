@@ -5,12 +5,32 @@ class ElementorDXColorImporter {
     this.originalKitColors = null;
     this.currentView = "ui";
     this.previewedVars = new Set();
-    this.init();
+
+    // Notice: We no longer call this.init() here. The DOM stays clean until triggered.
   }
 
-  init() {
-    this.injectFloatingUI();
-    this.fetchInitialData();
+  /**
+   * SPECIAL TRIGGER FUNCTION
+   * Call this to inject (if needed) and show the UI.
+   */
+  open() {
+    const wrapper = document.getElementById("dx-color-importer-wrapper");
+    if (!wrapper) {
+      this.injectFloatingUI();
+      this.fetchInitialData();
+    } else {
+      wrapper.style.display = "flex";
+    }
+  }
+
+  /**
+   * Hides the UI without destroying the data or DOM
+   */
+  close() {
+    const wrapper = document.getElementById("dx-color-importer-wrapper");
+    if (wrapper) {
+      wrapper.style.display = "none";
+    }
   }
 
   injectFloatingUI() {
@@ -70,9 +90,14 @@ class ElementorDXColorImporter {
       <!-- Draggable Header -->
       <div id="dx-drag-handle" style="cursor: grab; background: #1e1e1e; padding: 10px 12px; border-radius: 6px 6px 0 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center;">
         <h4 style="margin:0; color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; pointer-events: none;">Custom Colors</h4>
-        <button id="dx-btn-minimize" class="dx-min-btn" title="Toggle Panel">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
+        <div style="display:flex; gap:4px; align-items:center;">
+          <button id="dx-btn-minimize" class="dx-min-btn" title="Toggle Panel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+          <button id="dx-btn-close" class="dx-min-btn" title="Close Panel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
       </div>
 
       <!-- Main Body Content -->
@@ -206,11 +231,18 @@ class ElementorDXColorImporter {
     const btnClear = document.getElementById("dx-btn-clear");
     const btnPrompt = document.getElementById("dx-btn-prompt");
     const btnMinimize = document.getElementById("dx-btn-minimize");
+    const btnClose = document.getElementById("dx-btn-close"); // NEW CLOSE BUTTON
     const bodyContent = document.getElementById("dx-color-body");
 
-    // Prevent drag interference when clicking the minimize button
-    btnMinimize.onmousedown = (e) => {
+    // Prevent drag interference when clicking the minimize/close buttons
+    btnMinimize.onmousedown = (e) => e.stopPropagation();
+    btnClose.onmousedown = (e) => e.stopPropagation();
+
+    // Close logic
+    btnClose.onclick = (e) => {
+      e.preventDefault();
       e.stopPropagation();
+      this.close();
     };
 
     btnMinimize.onclick = (e) => {
@@ -368,14 +400,12 @@ Accent 2: #EBD52B`;
 
   livePreviewColors() {
     const colors = this.parseColors();
-    if (!Array.isArray(colors)) return; // Only process valid JSON
+    if (!Array.isArray(colors)) return;
 
-    // 1. Gather all potential targets in the main document (Root, Body, and Elementor Kit Wrapper)
     const allNodes = [document.documentElement, document.body];
     const kitElement = document.querySelector('[class*="elementor-kit-"]');
     if (kitElement) allNodes.push(kitElement);
 
-    // 2. Gather iframe targets if the editor is active
     const iframe = document.getElementById("elementor-preview-iframe");
     if (iframe && iframe.contentDocument) {
       const iframeDoc = iframe.contentDocument;
@@ -387,19 +417,16 @@ Accent 2: #EBD52B`;
     const currentVars = new Set();
     const usedIds = new Set();
 
-    // Pass 1: Collect Explicit IDs
     colors.forEach((c) => {
       if (c && c._id && c._id.trim() !== "") {
         usedIds.add(c._id.trim());
       }
     });
 
-    // Pass 2: Apply colors
     colors.forEach((c) => {
       if (c && c.color) {
         let varId = c._id && c._id.trim() !== "" ? c._id.trim() : null;
 
-        // Temporarily generate an ID for preview if it's missing
         if (!varId) {
           let baseId = (c.title || "color")
             .toLowerCase()
@@ -419,18 +446,15 @@ Accent 2: #EBD52B`;
         const cssVar = `--e-global-color-${varId}`;
         currentVars.add(cssVar);
 
-        // Find original value from baseline to check for delta
         const originalColor = this.originalKitColors?.find(
           (orig) => orig._id === varId,
         );
 
-        // Only inject inline style if value differs from the original
         if (!originalColor || originalColor.color !== c.color) {
           allNodes.forEach((node) => {
             node.style.setProperty(cssVar, c.color, "important");
           });
         } else {
-          // If it matches the original, let the native Elementor stylesheet take over
           allNodes.forEach((node) => {
             node.style.removeProperty(cssVar);
           });
@@ -438,7 +462,6 @@ Accent 2: #EBD52B`;
       }
     });
 
-    // Cleanup vars that were completely removed from JSON
     this.previewedVars.forEach((oldVar) => {
       if (!currentVars.has(oldVar)) {
         allNodes.forEach((node) => node.style.removeProperty(oldVar));
@@ -454,7 +477,6 @@ Accent 2: #EBD52B`;
 
     const currentColors = this.parseColors();
 
-    // Only enable if JSON is valid and different from original
     const isChanged =
       JSON.stringify(currentColors) !== JSON.stringify(this.originalKitColors);
 
@@ -535,7 +557,7 @@ Accent 2: #EBD52B`;
       safeColors.length > 0 ? JSON.stringify(safeColors, null, 4) : "[]";
     this.renderGrid();
     this.evaluateApplyButtonState();
-    this.livePreviewColors(); // Keep preview in sync
+    this.livePreviewColors();
   }
 
   async fetchInitialData() {
@@ -554,12 +576,11 @@ Accent 2: #EBD52B`;
     }
   }
 
-  // Reliable cross-browser color converter utilizing the DOM
   formatColor(colorStr, targetFormat) {
     const div = document.createElement("div");
     div.style.color = colorStr;
     document.body.appendChild(div);
-    const computed = window.getComputedStyle(div).color; // returns rgb() or rgba()
+    const computed = window.getComputedStyle(div).color;
     document.body.removeChild(div);
 
     if (targetFormat === "rgba") {
@@ -668,6 +689,22 @@ Accent 2: #EBD52B`;
   }
 }
 
+// ----------------------------------------------------
+// INITIALIZATION AND TRIGGER LOGIC
+// ----------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  new ElementorDXColorImporter();
+  // 1. Create an instance globally so your future pop-up menu class can access it
+  window.dxColorImporter = new ElementorDXColorImporter();
+
+  // 2. Event Delegation for your trigger buttons (like #color-importerr)
+  document.addEventListener("click", (e) => {
+    // Check if the clicked element (or its parent) is the trigger button
+    const triggerBtn = e.target.closest("#color-importerr");
+
+    if (triggerBtn) {
+      e.preventDefault();
+      // Call the special function to inject/show the UI
+      window.dxColorImporter.open();
+    }
+  });
 });

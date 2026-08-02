@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: Elementor DX
- * Description: Enhances Elementor's developer experience by adding a right-click context menu to easily inject CSS variables into numeric settings.
+ * Description: Enhances Elementor's developer experience by adding a right-click context menu, global styling importers, and a radial tools menu.
  * Version: 1.0.0
  * Author: DX Enhancements
  * Text Domain: elementor-dx-vars
@@ -13,17 +13,16 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-// 1. Define paths and URLs properly
+// Define paths and URLs properly
 define('ELEMENTOR_DX_PATH', plugin_dir_path(__FILE__));
 define('ELEMENTOR_DX_URL', plugin_dir_url(__FILE__));
 
-// 2. Wrap everything in a main class to prevent global scope errors
 class Elementor_DX_Core
 {
 
     /**
      * Instance of this class.
-     * @var mixed $instance
+     * @var Elementor_DX_Core|null
      */
     private static $instance = null;
 
@@ -57,55 +56,45 @@ class Elementor_DX_Core
             return;
         }
 
-
+        // Include API endpoints
         require_once ELEMENTOR_DX_PATH . 'includes/class-elementor-dx-api.php';
-        require_once ELEMENTOR_DX_PATH . 'includes/class-elementor-dx-god-mode-api.php';
+
+
+        // Enqueue hooks
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
         add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_scripts']);
-        add_action('wp_enqueue_scripts', [$this, 'elementor_dx_enqueue_god_mode']);
     }
 
-    // 2. Enqueue the JavaScript UI & Localization
-    function elementor_dx_enqueue_god_mode()
+    /**
+     * Enqueue scripts for the live Frontend.
+     */
+    public function enqueue_frontend_scripts()
     {
-
-        // Security check: Only load God Mode for users who can edit posts
+        // Security: Only load for users who have permission to edit posts
         if (! current_user_can('edit_posts')) {
             return;
         }
 
-        // Register and enqueue the script
-        // Use get_stylesheet_directory_uri() instead of plugin_dir_url() if using a theme
-        wp_enqueue_script(
-            'elementor-dx-god-mode-js',
-            plugin_dir_url(__FILE__) . 'assets/js/elementor-dx-god-mode.js',
-            [], // No dependencies needed
-            '1.0.0',
-            true // Load in footer
-        );
+        // PREVENT DOUBLE UI: Do not load these scripts inside the Elementor Editor iframe
+        if (class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->preview->is_preview_mode()) {
+            return;
+        }
 
-        // Pass the REST API root URL and Nonce to the JavaScript file
-        wp_localize_script(
-            'elementor-dx-god-mode-js',
-            'elementorDxSettings',
-            [
-                'root'  => esc_url_raw(rest_url()),
-                'nonce' => wp_create_nonce('wp_rest'),
-            ]
-        );
+        // Load the floating tools on the live frontend
+        $this->enqueue_global_tools();
     }
 
-
-
     /**
-     * Enqueue scripts and styles only in the Elementor Editor.
+     * Enqueue scripts specific to the Elementor Editor parent window.
      */
     public function enqueue_editor_scripts()
     {
+        // Security check
+        if (! current_user_can('edit_posts')) {
+            return;
+        }
 
-
-
-
-        // --- 2. Spacing Context Menu JS ---
+        // --- Editor Only Enhancements ---
         wp_enqueue_script(
             'elementor-dx-spacing',
             ELEMENTOR_DX_URL . 'assets/js/elementor-dx-spacing.js',
@@ -114,7 +103,6 @@ class Elementor_DX_Core
             true
         );
 
-        // --- 3. Main DX Variables / CSS Snippets JS ---
         wp_enqueue_script(
             'elementor-dx-css-snippets',
             ELEMENTOR_DX_URL . 'assets/js/elementor-dx-css-snippets.js',
@@ -123,25 +111,90 @@ class Elementor_DX_Core
             true
         );
 
-        // --- 4. Colors Manager JS ---
+        wp_enqueue_script(
+            'elementor-dx-css-classes',
+            ELEMENTOR_DX_URL . 'assets/js/elementor-dx-css-classes.js',
+            ['jquery'],
+            '1.0.0',
+            true
+        );
+
+        // Load the floating tools in the parent editor UI
+        $this->enqueue_global_tools();
+    }
+
+    /**
+     * Centralized method to enqueue the major tools and radial menu.
+     * Reused by both frontend and editor hooks.
+     */
+    private function enqueue_global_tools()
+    {
+
+        // 1. Color Importer
         wp_enqueue_script(
             'elementor-dx-color-importer',
             ELEMENTOR_DX_URL . 'assets/js/elementor-dx-color-importer.js',
-            ['jquery'],
+            [], // Pure JS
             '1.0.0',
             true
         );
 
-        // --- 4. Colors Manager JS ---
+        // 2. Typography Importer
         wp_enqueue_script(
             'elementor-dx-typography-importer',
             ELEMENTOR_DX_URL . 'assets/js/elementor-dx-typography-importer.js',
-            ['jquery'],
+            [], // Pure JS
             '1.0.0',
             true
         );
 
-        // Pass REST API variables to the Colors Manager JS
+
+
+
+        wp_enqueue_script(
+            'elementor-dx-grid',
+            ELEMENTOR_DX_URL . 'assets/js/elementor-dx-grid.js',
+            [], // Pure JS
+            '1.0.0',
+            true
+        );
+
+        wp_enqueue_script(
+            'elementor-dx-wireframe',
+            ELEMENTOR_DX_URL . 'assets/js/elementor-dx-wireframe.js',
+            [],
+            '1.0.0',
+            true
+        );
+
+        wp_enqueue_script(
+            'elementor-dx-hierarchy',
+            ELEMENTOR_DX_URL . 'assets/js/elementor-dx-hierarchy.js',
+            [],
+            '1.0.0',
+            true
+        );
+
+        wp_enqueue_script(
+            'elementor-dx-xray',
+            ELEMENTOR_DX_URL . 'assets/js/elementor-dx-xray.js',
+            [],
+            '1.0.0',
+            true
+        );
+
+        // 4. Radial Menu (The Main Trigger UI)
+        wp_enqueue_script(
+            'elementor-dx-menu',
+            ELEMENTOR_DX_URL . 'assets/js/elementor-dx-menu.js',
+            [], // Pure JS
+            '1.0.0',
+            true
+        );
+
+        // Pass the REST API root URL and Nonce to the JavaScript files
+        // We attach this to 'elementor-dx-color-importer' (first loaded), 
+        // making 'elementorDxSettings' available globally to all subsequent scripts.
         wp_localize_script(
             'elementor-dx-color-importer',
             'elementorDxSettings',
@@ -149,15 +202,6 @@ class Elementor_DX_Core
                 'root'  => esc_url_raw(rest_url()),
                 'nonce' => wp_create_nonce('wp_rest'),
             ]
-        );
-
-        // --- 5. CSS Classes UI Enhancer ---
-        wp_enqueue_script(
-            'elementor-dx-css-classes',
-            ELEMENTOR_DX_URL . 'assets/js/elementor-dx-css-classes.js',
-            ['jquery'],
-            '1.0.0',
-            true
         );
     }
 }

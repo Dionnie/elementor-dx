@@ -6,12 +6,32 @@ class ElementorDXTypographyImporter {
     this.originalTokenMap = new Map(); // Baseline for live preview delta check
     this.currentView = "ui";
     this.previewedVars = new Set();
-    this.init();
+
+    // Notice: We no longer call this.init() here. The DOM stays clean until triggered.
   }
 
-  init() {
-    this.injectFloatingUI();
-    this.fetchInitialData();
+  /**
+   * SPECIAL TRIGGER FUNCTION
+   * Call this to inject (if needed) and show the UI.
+   */
+  open() {
+    const wrapper = document.getElementById("dx-typo-importer-wrapper");
+    if (!wrapper) {
+      this.injectFloatingUI();
+      this.fetchInitialData();
+    } else {
+      wrapper.style.display = "flex";
+    }
+  }
+
+  /**
+   * Hides the UI without destroying the data or DOM
+   */
+  close() {
+    const wrapper = document.getElementById("dx-typo-importer-wrapper");
+    if (wrapper) {
+      wrapper.style.display = "none";
+    }
   }
 
   injectFloatingUI() {
@@ -36,19 +56,6 @@ class ElementorDXTypographyImporter {
         transition: all 0.2s; margin-right: -4px;
       }
       .dx-typo-min-btn:hover { background: #333; color: #fff; }
-
-      .dx-typo-radio-group {
-        display: flex; background: #222; border: 1px solid #555; 
-        border-radius: 4px; overflow: hidden; font-size: 10px;
-      }
-      .dx-typo-radio-label { margin: 0; cursor: pointer; }
-      .dx-typo-radio-label input { display: none; }
-      .dx-typo-radio-label span {
-        display: block; padding: 4px 8px; color: #999; transition: 0.2s;
-        font-weight: 500; white-space: nowrap;
-      }
-      .dx-typo-radio-label input:checked + span { background: #444; color: #fff; }
-      .dx-typo-radio-label:hover span { background: #333; }
       
       .dx-typo-pill {
         padding: 6px 12px; background: #333; border: 1px solid #444; 
@@ -62,7 +69,6 @@ class ElementorDXTypographyImporter {
 
     const wrapper = document.createElement("div");
     wrapper.id = "dx-typo-importer-wrapper";
-    // Slightly offset from the color panel so they can be stacked nicely
     wrapper.style.cssText = `
       position: fixed; top: 80px; left: 40px; width: 360px; background: #2b2b2b;
       border: 1px solid #444; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -73,9 +79,14 @@ class ElementorDXTypographyImporter {
       <!-- Draggable Header -->
       <div id="dx-typo-drag-handle" style="cursor: grab; background: #1e1e1e; padding: 10px 12px; border-radius: 6px 6px 0 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center;">
         <h4 style="margin:0; color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; pointer-events: none;">Custom Typography</h4>
-        <button id="dx-typo-btn-minimize" class="dx-typo-min-btn" title="Toggle Panel">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
+        <div style="display:flex; gap:4px; align-items:center;">
+          <button id="dx-typo-btn-minimize" class="dx-typo-min-btn" title="Toggle Panel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+          <button id="dx-typo-btn-close" class="dx-typo-min-btn" title="Close Panel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
       </div>
 
       <!-- Main Body Content -->
@@ -110,37 +121,19 @@ class ElementorDXTypographyImporter {
           
           <!-- Workspace: UI -->
           <div id="dx-typo-view-ui" style="display:block;">
-            <div id="dx-typo-grid" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; max-height:220px; overflow-y:auto; padding: 4px 2px;"></div>
             
             <!-- Compact Copy on Click Toolbar -->
-            <div style="display:flex; align-items:center; justify-content:space-between; background:#1e1e1e; padding:6px 8px; border:1px solid #444; border-radius:4px;">
-              
-              <div style="color:#aaa; display:flex; align-items:center; justify-content:center; padding: 0 4px;" title="Select the property to copy when clicking a font">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div style="display:flex; align-items:center; justify-content:center; background:#1e1e1e; padding:8px; border:1px solid #444; border-radius:4px; margin-bottom:12px;">
+              <div style="color:#aaa; font-size: 11px; display:flex; align-items:center; gap: 6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                 </svg>
-              </div>
-
-              <div class="dx-typo-radio-group">
-                <label class="dx-typo-radio-label" title="Copy Font Family Variable">
-                  <input type="radio" name="dx-typo-copy" value="font-family" checked>
-                  <span>Family</span>
-                </label>
-                <label class="dx-typo-radio-label" title="Copy Font Size Variable">
-                  <input type="radio" name="dx-typo-copy" value="font-size">
-                  <span>Size</span>
-                </label>
-                <label class="dx-typo-radio-label" title="Copy Font Weight Variable">
-                  <input type="radio" name="dx-typo-copy" value="font-weight">
-                  <span>Weight</span>
-                </label>
-                <label class="dx-typo-radio-label" title="Copy Line Height Variable">
-                  <input type="radio" name="dx-typo-copy" value="line-height">
-                  <span>Height</span>
-                </label>
+                <span>Click a style below to copy its CSS variables</span>
               </div>
             </div>
+
+            <div id="dx-typo-grid" style="display:flex; flex-wrap:wrap; gap:8px; max-height:220px; overflow-y:auto; padding: 4px 2px;"></div>
           </div>
 
           <!-- Workspace: RAW -->
@@ -213,11 +206,18 @@ class ElementorDXTypographyImporter {
     const btnClear = document.getElementById("dx-typo-btn-clear");
     const btnPrompt = document.getElementById("dx-typo-btn-prompt");
     const btnMinimize = document.getElementById("dx-typo-btn-minimize");
+    const btnClose = document.getElementById("dx-typo-btn-close"); // NEW CLOSE BUTTON
     const bodyContent = document.getElementById("dx-typo-body");
 
-    // Prevent drag interference when clicking the minimize button
-    btnMinimize.onmousedown = (e) => {
+    // Prevent drag interference when clicking the minimize/close buttons
+    btnMinimize.onmousedown = (e) => e.stopPropagation();
+    btnClose.onmousedown = (e) => e.stopPropagation();
+
+    // Close logic
+    btnClose.onclick = (e) => {
+      e.preventDefault();
       e.stopPropagation();
+      this.close();
     };
 
     btnMinimize.onclick = (e) => {
@@ -638,15 +638,39 @@ Please generate a full scale including Primary/Secondary styles, H1 through H6 s
       pill.title = `ID: ${t._id || "pending-save"}`;
 
       pill.onclick = () => {
-        const propSuffix = document.querySelector(
-          'input[name="dx-typo-copy"]:checked',
-        ).value;
         const fallbackId = t._id || "pending-save";
-        const cssVar = `var(--e-global-typography-${fallbackId}-${propSuffix})`;
+        const prefix = `--e-global-typography-${fallbackId}`;
+
+        let cssLines = [];
+
+        // Dynamically build rules only for the properties that exist in JSON
+        if (t.typography_font_family)
+          cssLines.push(`font-family: var(${prefix}-font-family);`);
+        if (t.typography_font_weight)
+          cssLines.push(`font-weight: var(${prefix}-font-weight);`);
+        if (t.typography_font_size)
+          cssLines.push(`font-size: var(${prefix}-font-size);`);
+        if (t.typography_line_height)
+          cssLines.push(`line-height: var(${prefix}-line-height);`);
+
+        // Fallback incase the item is completely empty
+        if (cssLines.length === 0) {
+          cssLines = [
+            `font-family: var(${prefix}-font-family);`,
+            `font-weight: var(${prefix}-font-weight);`,
+            `font-size: var(${prefix}-font-size);`,
+            `line-height: var(${prefix}-line-height);`,
+          ];
+        }
+
+        const cssBlock = cssLines.join("\n");
 
         navigator.clipboard
-          .writeText(cssVar)
-          .then(() => this.showStatus(`Copied: ${cssVar}`, "success"));
+          .writeText(cssBlock)
+          .then(() =>
+            this.showStatus(`Copied CSS block for ${t.title}`, "success"),
+          )
+          .catch(() => this.showStatus("Failed to copy CSS.", "error"));
       };
 
       grid.appendChild(pill);
@@ -700,6 +724,10 @@ Please generate a full scale including Primary/Secondary styles, H1 through H6 s
   }
 }
 
+// ----------------------------------------------------
+// INITIALIZATION
+// ----------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  new ElementorDXTypographyImporter();
+  // Save the instance to the window object so the Radial Menu can access it
+  window.dxTypographyImporter = new ElementorDXTypographyImporter();
 });
