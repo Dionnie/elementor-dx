@@ -77,7 +77,7 @@ class ElementorDXTypographyImporter {
       .dx-body { padding: 12px; }
 
       .dx-icon-btn { cursor: pointer; border: 1px solid #444; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-      .dx-icon-btn:hover { background: #333; color: #fff; border-color: #ED01EE; }
+      .dx-icon-btn:hover { background: #333; color: #fff; border-color: #F2ADF3; }
       .dx-icon-btn:active { transform: scale(0.95); }
       
       .dx-min-btn { cursor: pointer; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-right: -4px; }
@@ -85,13 +85,13 @@ class ElementorDXTypographyImporter {
       
       .dx-tab-btn { background: #222; color: #aaa; padding: 6px 10px; border-radius: 3px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 10px; }
       .dx-tab-btn:hover:not(.is-active) { background: #333; color: #fff; }
-      .dx-tab-btn.is-active { background: #ED01EE; color: #fff; }
+      .dx-tab-btn.is-active { background: #F2ADF3; color: #2A0624; }
 
       .dx-typo-pill { padding: 8px 12px; background: #222; border: 1px solid #444; border-radius: 20px; font-size: 11px; color: #ddd; cursor: pointer; transition: all 0.2s; user-select: none; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-      .dx-typo-pill:hover { background: #333; border-color: #ED01EE; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+      .dx-typo-pill:hover { background: #333; border-color: #F2ADF3; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
       
-      .dx-primary-btn { background: #ED01EE; color: #fff; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px; }
-      .dx-primary-btn:hover:not(:disabled) { background: #620856; }
+      .dx-primary-btn { background: #F2ADF3; color: #2A0624; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px; }
+      .dx-primary-btn:hover:not(:disabled) { background: #620856; color: #fff; }
       .dx-primary-btn:active:not(:disabled) { transform: scale(0.98); }
       .dx-primary-btn:disabled { background: #333; color: #666; border: 1px solid #444; cursor: not-allowed; filter: none; }
 
@@ -140,7 +140,7 @@ class ElementorDXTypographyImporter {
           </div>
         </div>
         <button id="dx-btn-update" class="dx-primary-btn">Apply Typography</button>
-        <div id="dx-typo-status" style="margin-top:8px; font-size:10px; color:#61ce70; display:none; text-align:center;"></div>
+        <div id="dx-typo-status" style="margin-top:8px; font-size:10px; color:#F2ADF3; display:none; text-align:center;"></div>
       </div>
     `;
 
@@ -405,6 +405,21 @@ class ElementorDXTypographyImporter {
           `${prefix}-font-weight`,
           String(t.typography_font_weight),
         );
+      if (t.typography_text_transform)
+        this.originalTokenMap.set(
+          `${prefix}-text-transform`,
+          t.typography_text_transform,
+        );
+      if (t.typography_font_style)
+        this.originalTokenMap.set(
+          `${prefix}-font-style`,
+          t.typography_font_style,
+        );
+      if (t.typography_text_decoration)
+        this.originalTokenMap.set(
+          `${prefix}-text-decoration`,
+          t.typography_text_decoration,
+        );
       if (t.typography_font_size && t.typography_font_size.size)
         this.originalTokenMap.set(
           `${prefix}-font-size`,
@@ -418,6 +433,20 @@ class ElementorDXTypographyImporter {
           t.typography_line_height.unit === "custom"
             ? t.typography_line_height.size
             : `${t.typography_line_height.size}${t.typography_line_height.unit || "em"}`,
+        );
+      if (t.typography_letter_spacing && t.typography_letter_spacing.size)
+        this.originalTokenMap.set(
+          `${prefix}-letter-spacing`,
+          t.typography_letter_spacing.unit === "custom"
+            ? t.typography_letter_spacing.size
+            : `${t.typography_letter_spacing.size}${t.typography_letter_spacing.unit || "px"}`,
+        );
+      if (t.typography_word_spacing && t.typography_word_spacing.size)
+        this.originalTokenMap.set(
+          `${prefix}-word-spacing`,
+          t.typography_word_spacing.unit === "custom"
+            ? t.typography_word_spacing.size
+            : `${t.typography_word_spacing.size}${t.typography_word_spacing.unit || "px"}`,
         );
     });
   }
@@ -462,6 +491,21 @@ class ElementorDXTypographyImporter {
           prop: `${prefix}-font-weight`,
           val: String(t.typography_font_weight),
         });
+      if (t.typography_text_transform)
+        varsToApply.push({
+          prop: `${prefix}-text-transform`,
+          val: t.typography_text_transform,
+        });
+      if (t.typography_font_style)
+        varsToApply.push({
+          prop: `${prefix}-font-style`,
+          val: t.typography_font_style,
+        });
+      if (t.typography_text_decoration)
+        varsToApply.push({
+          prop: `${prefix}-text-decoration`,
+          val: t.typography_text_decoration,
+        });
       if (t.typography_font_size && t.typography_font_size.size)
         varsToApply.push({
           prop: `${prefix}-font-size`,
@@ -478,6 +522,23 @@ class ElementorDXTypographyImporter {
               ? t.typography_line_height.size
               : `${t.typography_line_height.size}${t.typography_line_height.unit || "em"}`,
         });
+      if (t.typography_letter_spacing && t.typography_letter_spacing.size)
+        varsToApply.push({
+          prop: `${prefix}-letter-spacing`,
+          val:
+            t.typography_letter_spacing.unit === "custom"
+              ? t.typography_letter_spacing.size
+              : `${t.typography_letter_spacing.size}${t.typography_letter_spacing.unit || "px"}`,
+        });
+      if (t.typography_word_spacing && t.typography_word_spacing.size)
+        varsToApply.push({
+          prop: `${prefix}-word-spacing`,
+          val:
+            t.typography_word_spacing.unit === "custom"
+              ? t.typography_word_spacing.size
+              : `${t.typography_word_spacing.size}${t.typography_word_spacing.unit || "px"}`,
+        });
+
       varsToApply.forEach((v) => {
         currentVars.add(v.prop);
         if (this.originalTokenMap.get(v.prop) !== v.val) {
@@ -642,10 +703,21 @@ class ElementorDXTypographyImporter {
           cssLines.push(`font-family: var(${prefix}-font-family);`);
         if (t.typography_font_weight)
           cssLines.push(`font-weight: var(${prefix}-font-weight);`);
-        if (t.typography_font_size)
+        if (t.typography_text_transform)
+          cssLines.push(`text-transform: var(${prefix}-text-transform);`);
+        if (t.typography_font_style)
+          cssLines.push(`font-style: var(${prefix}-font-style);`);
+        if (t.typography_text_decoration)
+          cssLines.push(`text-decoration: var(${prefix}-text-decoration);`);
+        if (t.typography_font_size && t.typography_font_size.size)
           cssLines.push(`font-size: var(${prefix}-font-size);`);
-        if (t.typography_line_height)
+        if (t.typography_line_height && t.typography_line_height.size)
           cssLines.push(`line-height: var(${prefix}-line-height);`);
+        if (t.typography_letter_spacing && t.typography_letter_spacing.size)
+          cssLines.push(`letter-spacing: var(${prefix}-letter-spacing);`);
+        if (t.typography_word_spacing && t.typography_word_spacing.size)
+          cssLines.push(`word-spacing: var(${prefix}-word-spacing);`);
+
         navigator.clipboard
           .writeText(cssLines.join("\n"))
           .then(() => this.showStatus(`Copied CSS`, "success"));
@@ -688,7 +760,7 @@ class ElementorDXTypographyImporter {
   showStatus(msg, type) {
     const el = this.shadow.getElementById("dx-typo-status");
     el.style.display = "block";
-    el.style.color = type === "error" ? "#ff7777" : "#61ce70";
+    el.style.color = type === "error" ? "#ff7777" : "#F2ADF3";
     el.innerText = msg;
     clearTimeout(this.statusTimer);
     this.statusTimer = setTimeout(() => {

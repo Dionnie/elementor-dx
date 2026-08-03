@@ -76,7 +76,7 @@ class ElementorDXColorImporter {
       .dx-body { padding: 12px; }
 
       .dx-icon-btn { cursor: pointer; border: 1px solid #444; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-      .dx-icon-btn:hover { background: #333; color: #fff; border-color: #ED01EE; }
+      .dx-icon-btn:hover { background: #333; color: #fff; border-color: #F2ADF3; }
       .dx-icon-btn:active { transform: scale(0.95); }
       
       .dx-min-btn { cursor: pointer; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-right: -4px; }
@@ -84,20 +84,20 @@ class ElementorDXColorImporter {
       
       .dx-tab-btn { background: #222; color: #aaa; padding: 6px 10px; border-radius: 3px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 10px; }
       .dx-tab-btn:hover:not(.is-active) { background: #333; color: #fff; }
-      .dx-tab-btn.is-active { background: #ED01EE; color: #fff; } /* Elementor Pink Accent */
+      .dx-tab-btn.is-active { background: #F2ADF3; color: #2A0624; } /* Elementor Pink Accent */
       
       .dx-radio-group { display: flex; background: #222; border: 1px solid #444; border-radius: 4px; overflow: hidden; font-size: 11px; }
       .dx-radio-label { margin: 0; cursor: pointer; display: block; }
       .dx-radio-label input { display: none; }
       .dx-radio-label span { display: block; padding: 6px 12px; color: #aaa; transition: 0.2s; font-weight: 500; }
-      .dx-radio-label input:checked + span { background: #ED01EE; color: #fff; font-weight: bold; }
+      .dx-radio-label input:checked + span { background: #F2ADF3; color: #2A0624; font-weight: bold; }
       .dx-radio-label:hover span { background: #333; color: #fff; }
       
       .dx-color-swatch { width: 100%; aspect-ratio: 1; border: 1px solid #444; border-radius: 4px; cursor: pointer; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.4); transition: transform 0.1s; }
-      .dx-color-swatch:hover { transform: scale(1.15); z-index: 2; border-color: #ED01EE; }
+      .dx-color-swatch:hover { transform: scale(1.15); z-index: 2; border-color: #F2ADF3; }
       
-      .dx-primary-btn { background: #ED01EE; color: #fff; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px; }
-      .dx-primary-btn:hover:not(:disabled) { background: #620856; } /* Burgundy Hover */
+      .dx-primary-btn { background: #F2ADF3; color: #2A0624; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px; }
+      .dx-primary-btn:hover:not(:disabled) { background: #620856; color: #fff; } /* Burgundy Hover */
       .dx-primary-btn:active:not(:disabled) { transform: scale(0.98); }
       .dx-primary-btn:disabled { background: #333; color: #666; border: 1px solid #444; cursor: not-allowed; filter: none; }
 
@@ -148,7 +148,7 @@ class ElementorDXColorImporter {
           </div>
         </div>
         <button id="dx-btn-update" class="dx-primary-btn">Apply Colors</button>
-        <div id="dx-color-status" style="margin-top:8px; font-size:10px; color:#61ce70; display:none; text-align:center;"></div>
+        <div id="dx-color-status" style="margin-top:8px; font-size:10px; color:#F2ADF3; display:none; text-align:center;"></div>
       </div>
     `;
 
@@ -658,7 +658,7 @@ class ElementorDXColorImporter {
   showStatus(msg, type) {
     const el = this.shadow.getElementById("dx-color-status");
     el.style.display = "block";
-    el.style.color = type === "error" ? "#ff7777" : "#61ce70";
+    el.style.color = type === "error" ? "#ff7777" : "#F2ADF3";
     el.innerText = msg;
     clearTimeout(this.statusTimer);
     this.statusTimer = setTimeout(() => {
