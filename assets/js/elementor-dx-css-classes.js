@@ -1,20 +1,6 @@
-/**
- * ElementorDX - CSS Classes Pill UI (Two-Way Sync + Debounce Fix)
- * Features a toggleable Enhanced UI that perfectly sits below the Classic field,
- * syncing in real-time and properly triggering Elementor's save state.
- */
 class ElementorDXCssClasses {
   constructor() {
-    this.colors = [
-      "#3b82f6",
-      "#10b981",
-      "#f59e0b",
-      "#ef4444",
-      "#8b5cf6",
-      "#ec4899",
-      "#06b6d4",
-    ];
-    this.checkTimeout = null; // Used for debouncing the DOM observer
+    this.checkTimeout = null;
     this.init();
   }
 
@@ -26,13 +12,9 @@ class ElementorDXCssClasses {
     const panel = document.getElementById("elementor-panel");
     if (!panel) return;
 
-    // Initial check in case panel is already open
     setTimeout(() => this.checkForCssControls(), 150);
 
     const observer = new MutationObserver(() => {
-      // THE FIX: Debounce the rendering.
-      // This waits 150ms after the LAST DOM mutation before firing.
-      // It ensures heavy widgets (like Containers) finish building completely.
       clearTimeout(this.checkTimeout);
       this.checkTimeout = setTimeout(() => this.checkForCssControls(), 150);
     });
@@ -41,28 +23,16 @@ class ElementorDXCssClasses {
   }
 
   checkForCssControls() {
-    // Catch core Elementor (_css_classes) and third-party widgets (css_classes)
     const cssControls = document.querySelectorAll(
       ".elementor-control-_css_classes, .elementor-control-css_classes",
     );
     cssControls.forEach((control) => this.injectPillsUI(control));
   }
 
-  getColor(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    hash = Math.abs(hash);
-    return this.colors[hash % this.colors.length];
-  }
-
   injectPillsUI(control) {
-    // Prevent duplicate injections
     if (control.querySelector(".dx-css-toggle-btn")) return;
 
     const controlField = control.querySelector(".elementor-control-field");
-    // Target both standard and non-standard input settings
     const originalInput = control.querySelector(
       'input[data-setting="_css_classes"], input[data-setting="css_classes"]',
     );
@@ -75,58 +45,101 @@ class ElementorDXCssClasses {
 
     const isEnhanced = localStorage.getItem("dx_css_mode_enhanced") === "true";
 
-    // 1. Format the Native Input Row
-    inputWrapper.style.display = "flex";
-    inputWrapper.style.alignItems = "center";
-    inputWrapper.style.gap = "8px";
-    originalInput.style.flexGrow = "1";
+    // 1. Format Native Input
+    inputWrapper.style.setProperty("display", "flex", "important");
+    inputWrapper.style.setProperty("align-items", "center", "important");
+    inputWrapper.style.setProperty("gap", "8px", "important");
+    originalInput.style.setProperty("flex-grow", "1", "important");
 
-    // 2. Create the Toggle Button
+    // 2. Inject Toggle Button (Inline Immunity)
     const toggleBtn = document.createElement("i");
     toggleBtn.className = "eicon-exchange dx-css-toggle-btn";
     toggleBtn.title = "Toggle Enhanced Classes UI";
     toggleBtn.style.cssText = `
-        cursor: pointer; font-size: 14px; 
-        color: ${isEnhanced ? "#61ce70" : "#a4afb7"}; transition: 0.2s;
-        flex-shrink: 0;
+        cursor: pointer !important; font-size: 14px !important; 
+        color: ${isEnhanced ? "#F2ADF3" : "#a4afb7"} !important; transition: 0.2s !important;
+        flex-shrink: 0 !important; margin: 0 !important; padding: 0 !important;
     `;
 
-    toggleBtn.onmouseover = () => (toggleBtn.style.color = "#fff");
+    toggleBtn.onmouseover = () =>
+      toggleBtn.style.setProperty(
+        "color",
+        isEnhanced ? "#620856" : "#fff",
+        "important",
+      );
     toggleBtn.onmouseout = () =>
-      (toggleBtn.style.color =
+      toggleBtn.style.setProperty(
+        "color",
         localStorage.getItem("dx_css_mode_enhanced") === "true"
-          ? "#61ce70"
-          : "#a4afb7");
+          ? "#F2ADF3"
+          : "#a4afb7",
+        "important",
+      );
 
     inputWrapper.prepend(toggleBtn);
 
-    // 3. Create the Enhanced Wrapper
+    // 3. Create the Shadow Host for the Pills UI
+    const host = document.createElement("div");
+    host.className = "dx-css-host";
+    host.style.cssText = "width: 100%; flex-basis: 100%; margin-top: 10px;";
+
+    const shadow = host.attachShadow({ mode: "open" });
+
+    const styles = document.createElement("style");
+    styles.innerHTML = `
+      :host { all: initial; font-family: sans-serif; display: ${isEnhanced ? "block" : "none"}; }
+      * { box-sizing: border-box; }
+      
+      .dx-pills-wrapper {
+        display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; 
+        border: 1px solid #444; border-radius: 4px; 
+        align-items: center; cursor: text; width: 100%;
+        background: #1e1e1e; transition: border-color 0.2s;
+      }
+      .dx-pills-wrapper:focus-within { border-color: #F2ADF3; }
+      
+      .dx-pills-container { display: flex; flex-wrap: wrap; gap: 6px; }
+      
+      .dx-pill {
+        display: inline-flex; align-items: center; 
+        background: #222; color: #ddd; border: 1px solid #444;
+        padding: 4px 10px; border-radius: 12px; 
+        font-size: 11px; font-weight: bold; font-family: monospace;
+        transition: all 0.2s ease; user-select: none;
+      }
+      .dx-pill:hover { background: #2A0624; color: #F2ADF3; border-color: #F2ADF3; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+      
+      .dx-pill-close { margin-left: 6px; cursor: pointer; font-size: 10px; font-weight: bold; opacity: 0.6; transition: all 0.2s ease; }
+      .dx-pill-close:hover { opacity: 1; color: #ef4444; }
+      .dx-pill.is-armed { background: #ef4444 !important; color: #fff !important; border-color: #ef4444 !important; }
+      
+      .dx-adder-input {
+        flex-grow: 1; background: transparent; border: none; 
+        color: #ddd; outline: none; min-width: 80px; 
+        font-size: 11px; padding: 4px; font-family: monospace;
+        appearance: none; -webkit-appearance: none;
+      }
+      .dx-adder-input::placeholder { color: #666; }
+    `;
+    shadow.appendChild(styles);
+
     const wrapper = document.createElement("div");
     wrapper.className = "dx-pills-wrapper";
-    wrapper.style.cssText = `
-        display: ${isEnhanced ? "flex" : "none"}; flex-wrap: wrap; gap: 5px; padding: 6px; 
-        border: 1px solid #404145; border-radius: 3px; 
-        align-items: center; cursor: text;
-        margin-top: 10px; width: 100%; flex-basis: 100%;
-    `;
 
     const pillsContainer = document.createElement("div");
-    pillsContainer.style.cssText = "display: flex; flex-wrap: wrap; gap: 5px;";
+    pillsContainer.className = "dx-pills-container";
 
     const adderInput = document.createElement("input");
+    adderInput.className = "dx-adder-input";
     adderInput.type = "text";
     adderInput.placeholder = "Add class...";
-    adderInput.style.cssText = `
-        flex-grow: 1; background: transparent; border: none; 
-        color: #a4afb7; outline: none; min-width: 80px; 
-        font-size: 14px; padding: 2px 4px; font-family: monospace;
-    `;
 
     wrapper.appendChild(pillsContainer);
     wrapper.appendChild(adderInput);
+    shadow.appendChild(wrapper);
 
-    controlField.style.flexWrap = "wrap";
-    controlField.appendChild(wrapper);
+    controlField.style.setProperty("flex-wrap", "wrap", "important");
+    controlField.appendChild(host);
 
     // 4. Central Syncing Engine
     let isSyncing = false;
@@ -142,25 +155,20 @@ class ElementorDXCssClasses {
       if (originalInput.value !== cleanString) {
         isSyncing = true;
         originalInput.value = cleanString;
-
         originalInput.dispatchEvent(new Event("input", { bubbles: true }));
         originalInput.dispatchEvent(new Event("change", { bubbles: true }));
-
-        if (typeof jQuery !== "undefined") {
+        if (typeof jQuery !== "undefined")
           jQuery(originalInput).trigger("input");
-        }
-
         isSyncing = false;
       }
-
       return uniqueArray;
     };
 
     // 5. Render Logic
     const renderPills = (forceSanitize = true, stringToProcess = null) => {
       pillsContainer.innerHTML = "";
-
       let classes = [];
+
       if (forceSanitize) {
         const sourceString =
           stringToProcess !== null ? stringToProcess : originalInput.value;
@@ -178,30 +186,14 @@ class ElementorDXCssClasses {
 
       classes.forEach((cls) => {
         const pill = document.createElement("span");
-        const baseColor = this.getColor(cls);
-
-        pill.style.cssText = `
-            display: inline-flex; align-items: center; 
-            background: ${baseColor}; color: #fff; 
-            padding: 3px 8px; border-radius: 12px; 
-            font-size: 14px; font-weight: 500; font-family: monospace;
-            transition: background 0.2s ease;
-        `;
+        pill.className = "dx-pill";
 
         const text = document.createElement("span");
         text.innerText = cls;
 
-        const removeBtn = document.createElement("i");
-        removeBtn.className = "eicon-close";
-        removeBtn.style.cssText =
-          "margin-left: 6px; cursor: pointer; font-size: 9px; opacity: 0.6; transition: all 0.2s ease;";
-
-        removeBtn.onmouseover = () => {
-          if (!removeBtn.dataset.armed) removeBtn.style.opacity = "1";
-        };
-        removeBtn.onmouseout = () => {
-          if (!removeBtn.dataset.armed) removeBtn.style.opacity = "0.6";
-        };
+        const removeBtn = document.createElement("span");
+        removeBtn.className = "dx-pill-close";
+        removeBtn.innerText = "×";
 
         let armTimer;
 
@@ -209,15 +201,10 @@ class ElementorDXCssClasses {
           e.stopPropagation();
           if (!removeBtn.dataset.armed) {
             removeBtn.dataset.armed = "true";
-            removeBtn.className = "eicon-trash";
-            removeBtn.style.opacity = "1";
-            pill.style.background = "#ef4444";
-
+            pill.classList.add("is-armed");
             armTimer = setTimeout(() => {
               delete removeBtn.dataset.armed;
-              removeBtn.className = "eicon-close";
-              removeBtn.style.opacity = "0.6";
-              pill.style.background = baseColor;
+              pill.classList.remove("is-armed");
             }, 2000);
           } else {
             clearTimeout(armTimer);
@@ -236,18 +223,17 @@ class ElementorDXCssClasses {
 
     // 6. Toggle Logic
     toggleBtn.addEventListener("click", () => {
-      const currentlyEnhanced = wrapper.style.display === "flex";
+      const currentlyEnhanced = host.style.display === "block";
       const newMode = !currentlyEnhanced;
-
       localStorage.setItem("dx_css_mode_enhanced", newMode);
 
       if (newMode) {
-        wrapper.style.display = "flex";
-        toggleBtn.style.color = "#61ce70";
+        host.style.display = "block";
+        toggleBtn.style.setProperty("color", "#F2ADF3", "important");
         renderPills(true);
       } else {
-        wrapper.style.display = "none";
-        toggleBtn.style.color = "#a4afb7";
+        host.style.display = "none";
+        toggleBtn.style.setProperty("color", "#a4afb7", "important");
       }
     });
 
@@ -256,15 +242,12 @@ class ElementorDXCssClasses {
     // 7. Classic Field Events
     originalInput.addEventListener("input", () => {
       if (isSyncing) return;
-      if (wrapper.style.display === "flex") renderPills(false);
+      if (host.style.display === "block") renderPills(false);
     });
 
     originalInput.addEventListener("blur", () => {
-      if (wrapper.style.display === "flex") {
-        renderPills(true);
-      } else {
-        sanitizeAndSync(originalInput.value);
-      }
+      if (host.style.display === "block") renderPills(true);
+      else sanitizeAndSync(originalInput.value);
     });
 
     // 8. Enhanced UI Events
@@ -289,14 +272,9 @@ class ElementorDXCssClasses {
       processAdderInput(paste);
     });
 
-    adderInput.addEventListener("blur", () => {
-      processAdderInput(adderInput.value);
-    });
-
+    adderInput.addEventListener("blur", () =>
+      processAdderInput(adderInput.value),
+    );
     wrapper.addEventListener("click", () => adderInput.focus());
   }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  new ElementorDXCssClasses();
-});

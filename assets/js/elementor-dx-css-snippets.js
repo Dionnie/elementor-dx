@@ -1,7 +1,6 @@
 class ElementorDXCssSnippets {
   constructor() {
     this.snippets = [
-      // Base & States
       {
         label: "{}",
         title: "Base Selector",
@@ -14,34 +13,30 @@ class ElementorDXCssSnippets {
         type: "block",
         code: "\nselector:hover {\n  \n}",
       },
-
-      // Media Queries
       {
         label: "@767",
-        title: "Mobile (max-width: 767px)",
+        title: "Mobile",
         type: "block",
         code: "\n@media (max-width: 767px) {\n  selector {\n    \n  }\n}",
       },
       {
         label: "@880",
-        title: "Tablet Portrait (max-width: 880px)",
+        title: "Tablet Portrait",
         type: "block",
         code: "\n@media (max-width: 880px) {\n  selector {\n    \n  }\n}",
       },
       {
         label: "@1024",
-        title: "Tablet Landscape (max-width: 1024px)",
+        title: "Tablet Landscape",
         type: "block",
         code: "\n@media (max-width: 1024px) {\n  selector {\n    \n  }\n}",
       },
       {
         label: "@1366",
-        title: "Laptop (max-width: 1366px)",
+        title: "Laptop",
         type: "block",
         code: "\n@media (max-width: 1366px) {\n  selector {\n    \n  }\n}",
       },
-
-      // Layout (Inline)
       {
         label: "flex: 100%",
         title: "Full Width Flex Child",
@@ -66,8 +61,6 @@ class ElementorDXCssSnippets {
         type: "inline",
         code: "position: absolute;\ntop: 50%;\nleft: 50%;\ntransform: translate(-50%, -50%);\n",
       },
-
-      // Utilities (Inline & Block)
       {
         label: "line-clamp",
         title: "Truncate text to 3 lines",
@@ -82,7 +75,7 @@ class ElementorDXCssSnippets {
       },
       {
         label: "hide-scroll",
-        title: "Hide Scrollbars (Cross-browser)",
+        title: "Hide Scrollbars",
         type: "block",
         code: "\nselector::-webkit-scrollbar {\n  display: none;\n}\nselector {\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}",
       },
@@ -92,63 +85,7 @@ class ElementorDXCssSnippets {
   }
 
   init() {
-    this.injectStyles();
     this.setupDynamicPanelObserver();
-  }
-
-  injectStyles() {
-    if (document.getElementById("dx-css-snippets-styles")) return;
-
-    const style = document.createElement("style");
-    style.id = "dx-css-snippets-styles";
-    style.textContent = `
-      .dx-css-toolbar-wrapper {
-        background: #1e1e1e;
-        border: 1px solid #444;
-        border-radius: 4px;
-        padding: 6px 8px;
-        margin-bottom: 8px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .dx-css-toolbar-header {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 9px;
-        color: #888;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: bold;
-        pointer-events: none;
-      }
-      .dx-css-toolbar {
-        display: flex;
-        gap: 4px;
-        flex-wrap: wrap;
-      }
-      .dx-css-btn {
-        background: #2b2b2b;
-        color: #aaa;
-        border: 1px solid #444;
-        padding: 4px 6px;
-        font-size: 10px;
-        font-family: monospace;
-        cursor: pointer;
-        border-radius: 3px;
-        transition: all 0.2s;
-        line-height: 1;
-      }
-      .dx-css-btn:hover {
-        background: #333;
-        color: #fff;
-        border-color: #777;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      }
-    `;
-    document.head.appendChild(style);
   }
 
   setupDynamicPanelObserver() {
@@ -172,8 +109,7 @@ class ElementorDXCssSnippets {
   }
 
   injectCssToolbar(controlElement) {
-    // Prevent duplicate injections
-    if (controlElement.querySelector(".dx-css-toolbar-wrapper")) return;
+    if (controlElement.querySelector(".dx-snippets-host")) return;
 
     const inputWrapper = controlElement.querySelector(
       ".elementor-control-input-wrapper",
@@ -182,26 +118,62 @@ class ElementorDXCssSnippets {
 
     if (!inputWrapper || !aceEditorElement) return;
 
-    // Build the master wrapper
+    // 1. Create the Shadow Host
+    const host = document.createElement("div");
+    host.className = "dx-snippets-host";
+    host.style.cssText = "width: 100%; margin-bottom: 8px;";
+
+    const shadow = host.attachShadow({ mode: "open" });
+
+    // 2. Inject Styles
+    const styles = document.createElement("style");
+    styles.innerHTML = `
+      :host { all: initial; font-family: sans-serif; }
+      * { box-sizing: border-box; }
+      button { appearance: none; -webkit-appearance: none; border: none; padding: 0; margin: 0; outline: none; }
+
+      .dx-css-toolbar-wrapper {
+        background: #1e1e1e; border: 1px solid #444; border-radius: 4px;
+        padding: 8px; display: flex; flex-direction: column; gap: 8px;
+      }
+      .dx-css-toolbar-header {
+        display: flex; align-items: center; gap: 6px; font-size: 9px;
+        color: #888; text-transform: uppercase; letter-spacing: 0.5px;
+        font-weight: bold; pointer-events: none;
+      }
+      .dx-css-toolbar { display: flex; gap: 6px; flex-wrap: wrap; }
+      
+      .dx-css-btn {
+        background: #222; color: #aaa; border: 1px solid #444;
+        padding: 6px 8px; font-size: 10px; font-family: monospace; font-weight: bold;
+        cursor: pointer; border-radius: 3px; transition: all 0.2s; line-height: 1;
+      }
+      .dx-css-btn:hover {
+        background: #2A0624; color: #F2ADF3; border-color: #620856;
+        transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+      .dx-css-btn:active { transform: scale(0.95); box-shadow: none; }
+      svg { display: block; }
+    `;
+    shadow.appendChild(styles);
+
+    // 3. Inject UI
     const wrapper = document.createElement("div");
     wrapper.className = "dx-css-toolbar-wrapper";
 
-    // Build the header
     const header = document.createElement("div");
     header.className = "dx-css-toolbar-header";
     header.innerHTML = `
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="16 18 22 12 16 6"></polyline>
         <polyline points="8 6 2 12 8 18"></polyline>
       </svg>
       DX Snippets
     `;
 
-    // Build the toolbar grid
     const toolbar = document.createElement("div");
     toolbar.className = "dx-css-toolbar";
 
-    // Inject buttons from snippet library dynamically
     this.snippets.forEach((snip) => {
       const btn = document.createElement("button");
       btn.className = "dx-css-btn";
@@ -218,9 +190,9 @@ class ElementorDXCssSnippets {
 
     wrapper.appendChild(header);
     wrapper.appendChild(toolbar);
+    shadow.appendChild(wrapper);
 
-    // Inject right above the Ace Editor
-    inputWrapper.parentNode.insertBefore(wrapper, inputWrapper);
+    inputWrapper.parentNode.insertBefore(host, inputWrapper);
   }
 
   insertIntoAceEditor(aceDomElement, text, type = "block") {
@@ -229,24 +201,16 @@ class ElementorDXCssSnippets {
       const session = editor.getSession();
 
       if (type === "inline") {
-        // Insert exactly where the cursor is
         const cursorPos = editor.getCursorPosition();
         session.insert(cursorPos, text);
         editor.focus();
       } else {
-        // Append block to the very bottom
         const lastRow = session.getLength();
         session.insert({ row: lastRow, column: 0 }, text);
         editor.focus();
-
-        // Move cursor inside the newly generated curly braces for immediate typing
         const newLastRow = session.getLength();
         editor.gotoLine(newLastRow - 1, 4);
       }
     }
   }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  new ElementorDXCssSnippets();
-});

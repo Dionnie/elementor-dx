@@ -16,106 +16,72 @@ class ElementorDXSpacing {
 
     this.currentTargetInput = null;
     this.currentActiveUnit = null;
+    this.host = null;
+    this.shadow = null;
+    this.menuElement = null;
+
     this.init();
   }
 
   init() {
-    this.injectStyles();
     this.setupSpacingContextMenu();
   }
 
-  injectStyles() {
-    if (document.getElementById("dx-spacing-styles")) return;
-
-    const style = document.createElement("style");
-    style.id = "dx-spacing-styles";
-    style.textContent = `
-      #dx-custom-context-menu {
-        position: fixed;
-        z-index: 999999;
-        background: #2b2b2b;
-        border: 1px solid #444;
-        border-radius: 6px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        width: max-content;
-        font-family: sans-serif;
-        opacity: 0;
-        visibility: hidden;
-        transform: scale(0.95);
-        transform-origin: top left;
-        transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s;
-      }
-      #dx-custom-context-menu.dx-active {
-        opacity: 1;
-        visibility: visible;
-        transform: scale(1);
-      }
-      .dx-spacing-header {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 10px;
-        font-weight: bold;
-        color: #aaa;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding-bottom: 6px;
-        margin-bottom: 6px;
-        border-bottom: 1px solid #444;
-        pointer-events: none;
-      }
-      .dx-spacing-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 4px;
-      }
-      .dx-menu-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 42px;
-        height: 42px;
-        background: #222;
-        border: 1px solid #444;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.2s;
-        user-select: none;
-      }
-      .dx-menu-item:hover {
-        background: #333;
-        border-color: #aaa;
-        transform: translateY(-1px);
-        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-      }
-      .dx-top-text {
-        font-size: 12px;
-        font-weight: 600;
-        color: #fff;
-        pointer-events: none;
-        line-height: 1;
-        margin-bottom: 4px;
-      }
-      .dx-bottom-text {
-        font-size: 9px;
-        font-weight: 500;
-        color: #888;
-        pointer-events: none;
-        line-height: 1;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
   setupSpacingContextMenu() {
-    const menu = document.createElement("div");
-    menu.id = "dx-custom-context-menu";
+    // 1. Create the Shadow Host anchored to body
+    this.host = document.createElement("div");
+    this.host.id = "dx-spacing-host";
+    this.host.style.cssText =
+      "position: fixed; z-index: 999999; top: 0; left: 0; width: 0; height: 0; overflow: visible;";
+    document.body.appendChild(this.host);
 
-    // Header
+    this.shadow = this.host.attachShadow({ mode: "open" });
+
+    // 2. Inject Styles
+    const styles = document.createElement("style");
+    styles.innerHTML = `
+      :host { all: initial; font-family: sans-serif; }
+      * { box-sizing: border-box; }
+
+      .dx-context-menu {
+        position: absolute; /* Relative to the fixed 0,0 host */
+        background: #2b2b2b; border: 1px solid #444; border-radius: 6px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); padding: 8px;
+        display: flex; flex-direction: column; width: max-content;
+        opacity: 0; visibility: hidden; transform: scale(0.95);
+        transform-origin: top left; transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s;
+      }
+      .dx-context-menu.is-active { opacity: 1; visibility: visible; transform: scale(1); }
+      
+      .dx-spacing-header {
+        display: flex; align-items: center; gap: 6px; font-size: 10px;
+        font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;
+        padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid #444; pointer-events: none;
+      }
+      
+      .dx-spacing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+      
+      .dx-menu-item {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        width: 44px; height: 44px; background: #222; border: 1px solid #444;
+        border-radius: 4px; cursor: pointer; transition: all 0.2s; user-select: none;
+      }
+      
+      .dx-menu-item:hover { background: #2A0624; border-color: #F2ADF3; transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0,0,0,0.3); }
+      .dx-menu-item:active { transform: scale(0.95); box-shadow: none; }
+      
+      .dx-top-text { font-size: 12px; font-weight: bold; color: #fff; pointer-events: none; line-height: 1; margin-bottom: 4px; transition: color 0.2s; }
+      .dx-bottom-text { font-size: 9px; font-weight: bold; color: #888; pointer-events: none; line-height: 1; transition: color 0.2s; }
+      
+      .dx-menu-item:hover .dx-top-text, .dx-menu-item:hover .dx-bottom-text { color: #F2ADF3; }
+      svg { display: block; }
+    `;
+    this.shadow.appendChild(styles);
+
+    // 3. Build UI
+    this.menuElement = document.createElement("div");
+    this.menuElement.className = "dx-context-menu";
+
     const header = document.createElement("div");
     header.className = "dx-spacing-header";
     header.innerHTML = `
@@ -126,9 +92,8 @@ class ElementorDXSpacing {
       </svg>
       Spacing Tokens
     `;
-    menu.appendChild(header);
+    this.menuElement.appendChild(header);
 
-    // Grid Container
     const grid = document.createElement("div");
     grid.className = "dx-spacing-grid";
 
@@ -150,7 +115,6 @@ class ElementorDXSpacing {
         if (this.currentTargetInput && token) {
           let finalValue = token.value;
 
-          // Apply value based strictly on the active unit
           if (this.currentActiveUnit === "px") {
             finalValue = token.px;
           } else if (
@@ -162,12 +126,10 @@ class ElementorDXSpacing {
             finalValue = token.value;
           }
 
-          // Switch input type to text if we are injecting a CSS variable string
           if (this.currentTargetInput.type === "number" && isNaN(finalValue)) {
             this.currentTargetInput.type = "text";
           }
 
-          // Inject the value and trigger Elementor's save events
           this.currentTargetInput.value = finalValue;
           this.currentTargetInput.dispatchEvent(
             new Event("input", { bubbles: true }),
@@ -177,87 +139,73 @@ class ElementorDXSpacing {
           );
         }
 
-        this.hideMenu(menu);
+        this.hideMenu();
       });
 
       grid.appendChild(item);
     });
 
-    menu.appendChild(grid);
-    document.body.appendChild(menu);
+    this.menuElement.appendChild(grid);
+    this.shadow.appendChild(this.menuElement);
 
+    // 4. Bind Global Right-Click Event
     document.addEventListener("contextmenu", (e) => {
       if (
         e.target.closest("#elementor-panel") &&
         e.target.matches("input[data-setting]")
       ) {
-        // 1. Find the parent control container
         const controlContainer = e.target.closest(".elementor-control");
         if (!controlContainer) return;
 
-        // 2. Look for the active unit using Elementor's switcher structure
         const unitSwitcher =
           controlContainer.querySelector(".e-units-switcher");
         const legacyUnitRadio = controlContainer.querySelector(
           'input[data-setting="unit"]:checked',
         );
 
-        let activeUnit = null; // Default to null to prevent popping up on z-index, opacity, etc.
-
+        let activeUnit = null;
         if (unitSwitcher) {
           activeUnit = unitSwitcher.dataset.selected;
         } else if (legacyUnitRadio) {
           activeUnit = legacyUnitRadio.value;
         }
 
-        // 3. If there is no unit switcher UI at all, abort entirely.
         if (!activeUnit) return;
 
-        // 4. Validate against spacing-compatible units.
         const allowedUnits = ["px", "rem", "em", "custom"];
-        if (!allowedUnits.includes(activeUnit)) {
-          return;
-        }
+        if (!allowedUnits.includes(activeUnit)) return;
 
-        // 5. Conditions met: prevent default menu and show ours
         e.preventDefault();
         this.currentTargetInput = e.target;
         this.currentActiveUnit = activeUnit;
 
-        // Boundary collision detection to prevent menu from clipping off-screen
-        const menuWidth = 200;
-        const menuHeight = 180;
-
+        const menuWidth = 210;
+        const menuHeight = 190;
         let xPos = e.clientX;
         let yPos = e.clientY;
 
-        if (xPos + menuWidth > window.innerWidth) {
+        if (xPos + menuWidth > window.innerWidth)
           xPos = window.innerWidth - menuWidth - 10;
-        }
-        if (yPos + menuHeight > window.innerHeight) {
+        if (yPos + menuHeight > window.innerHeight)
           yPos = window.innerHeight - menuHeight - 10;
-        }
 
-        menu.style.top = `${yPos}px`;
-        menu.style.left = `${xPos}px`;
-        menu.classList.add("dx-active");
+        this.menuElement.style.top = `${yPos}px`;
+        this.menuElement.style.left = `${xPos}px`;
+        this.menuElement.classList.add("is-active");
       }
     });
 
     document.addEventListener("click", (e) => {
-      if (!e.target.closest("#dx-custom-context-menu")) {
-        this.hideMenu(menu);
+      // Ensure we don't accidentally close if clicking inside the shadow menu
+      if (!e.composedPath().includes(this.menuElement)) {
+        this.hideMenu();
       }
     });
   }
 
-  hideMenu(menuElement) {
-    menuElement.classList.remove("dx-active");
+  hideMenu() {
+    if (this.menuElement) this.menuElement.classList.remove("is-active");
     this.currentTargetInput = null;
     this.currentActiveUnit = null;
   }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  new ElementorDXSpacing();
-});
