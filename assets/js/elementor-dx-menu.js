@@ -307,7 +307,7 @@ class ElementorDXGridMenu {
 // GLOBAL INITIALIZATION & REGISTRATION
 // ----------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Safely initialize ALL standalone modules
+  // 1. Safely initialize ALL standalone modules globally
   if (typeof ElementorDXColorImporter !== "undefined")
     window.dxColorImporter = new ElementorDXColorImporter();
   if (typeof ElementorDXTypographyImporter !== "undefined")
@@ -320,6 +320,18 @@ document.addEventListener("DOMContentLoaded", () => {
     window.dxWireframe = new ElementorDXWireframe();
   if (typeof ElementorDXClassFinder !== "undefined")
     window.dxClassFinder = new ElementorDXClassFinder();
+
+  // Initialize the EM Ruler!
+  if (typeof ElementorDXEmRuler !== "undefined")
+    window.dxEmRuler = new ElementorDXEmRuler();
+
+  // Initialize the automated panel enhancements
+  if (typeof ElementorDXCssClasses !== "undefined")
+    window.dxCssClasses = new ElementorDXCssClasses();
+  if (typeof ElementorDXCssSnippets !== "undefined")
+    window.dxCssSnippets = new ElementorDXCssSnippets();
+  if (typeof ElementorDXSpacing !== "undefined")
+    window.dxSpacing = new ElementorDXSpacing();
 
   // 2. Initialize the Grid Menu
   window.dxGridMenu = new ElementorDXGridMenu({
@@ -403,6 +415,21 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         getState: () => {
           return window.dxClassFinder && window.dxClassFinder.isOpen;
+        },
+      },
+      {
+        title: "EM Ruler",
+        icon: `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="6" rx="2" ry="2"></rect><line x1="7" y1="9" x2="7" y2="12"></line><line x1="11" y1="9" x2="11" y2="12"></line><line x1="15" y1="9" x2="15" y2="12"></line></svg>`,
+        action: () => {
+          if (window.dxEmRuler) {
+            window.dxEmRuler.toggle();
+            window.dxGridMenu.showToast(
+              window.dxEmRuler.getState() ? "RULER ENABLED" : "RULER DISABLED",
+            );
+          }
+        },
+        getState: () => {
+          return window.dxEmRuler && window.dxEmRuler.getState();
         },
       },
     ],

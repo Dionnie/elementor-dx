@@ -53,7 +53,6 @@ class ElementorDXTypographyImporter {
 
     const styles = document.createElement("style");
     styles.innerHTML = `
-      /* Theme Immunity Reset */
       :host { all: initial; font-family: sans-serif; }
       * { box-sizing: border-box; }
       button, input, textarea { 
@@ -62,9 +61,9 @@ class ElementorDXTypographyImporter {
         box-shadow: none; outline: none; text-transform: none; font-family: inherit;
       }
 
-      /* Specific UI Styles */
+      /* Classic Dark Mode Wrapper */
       .dx-wrapper {
-        position: fixed; top: 80px; left: 40px; width: 360px; background: #2b2b2b; color: #fff;
+        position: fixed; top: 80px; left: 40px; width: 380px; background: #2b2b2b; color: #fff;
         border: 1px solid #444; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         display: flex; flex-direction: column;
       }
@@ -77,27 +76,26 @@ class ElementorDXTypographyImporter {
       
       .dx-body { padding: 12px; }
 
-      .dx-typo-icon-btn { cursor: pointer; border: 1px solid #444; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-      .dx-typo-icon-btn:hover { background: #2A0624; color: #F2ADF3; border-color: #620856; }
-      .dx-typo-icon-btn:active { transform: scale(0.95); }
+      .dx-icon-btn { cursor: pointer; border: 1px solid #444; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+      .dx-icon-btn:hover { background: #333; color: #fff; border-color: #ED01EE; }
+      .dx-icon-btn:active { transform: scale(0.95); }
       
-      .dx-typo-min-btn { cursor: pointer; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-right: -4px; }
-      .dx-typo-min-btn:hover { background: #333; color: #fff; }
+      .dx-min-btn { cursor: pointer; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-right: -4px; }
+      .dx-min-btn:hover { background: #333; color: #fff; }
       
       .dx-tab-btn { background: #222; color: #aaa; padding: 6px 10px; border-radius: 3px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 10px; }
-      .dx-tab-btn:hover { background: #333; color: #fff; }
-      .dx-tab-btn.is-active { background: #F2ADF3; color: #2A0624; }
-      
-      .dx-typo-pill { padding: 8px 12px; background: #222; border: 1px solid #444; border-radius: 20px; font-size: 11px; color: #ddd; cursor: pointer; transition: all 0.2s; user-select: none; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin: 0; }
-      .dx-typo-pill:hover { background: #2A0624; border-color: #F2ADF3; color: #F2ADF3; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-      .dx-typo-pill:active { transform: translateY(1px); box-shadow: none; }
-      
-      .dx-primary-btn { background: #F2ADF3; color: #2A0624; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px; }
-      .dx-primary-btn:hover:not(:disabled) { background: #620856; color: #F2ADF3; }
-      .dx-primary-btn:active:not(:disabled) { transform: scale(0.98); }
-      .dx-primary-btn:disabled { background: #333; color: #666; border: 1px solid #444; cursor: not-allowed; }
+      .dx-tab-btn:hover:not(.is-active) { background: #333; color: #fff; }
+      .dx-tab-btn.is-active { background: #ED01EE; color: #fff; }
 
-      textarea { width: 100%; background: #1e1e1e; color: #d4d4d4; border: 1px solid #444; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 10px; resize: vertical; box-sizing: border-box; }
+      .dx-typo-pill { padding: 8px 12px; background: #222; border: 1px solid #444; border-radius: 20px; font-size: 11px; color: #ddd; cursor: pointer; transition: all 0.2s; user-select: none; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+      .dx-typo-pill:hover { background: #333; border-color: #ED01EE; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+      
+      .dx-primary-btn { background: #ED01EE; color: #fff; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px; }
+      .dx-primary-btn:hover:not(:disabled) { background: #620856; }
+      .dx-primary-btn:active:not(:disabled) { transform: scale(0.98); }
+      .dx-primary-btn:disabled { background: #333; color: #666; border: 1px solid #444; cursor: not-allowed; filter: none; }
+
+      textarea { width: 100%; background: #1e1e1e; color: #d4d4d4; border: 1px solid #444; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 10px; resize: vertical; box-sizing: border-box; outline: none;}
       svg { display: block; }
     `;
     this.shadow.appendChild(styles);
@@ -107,28 +105,28 @@ class ElementorDXTypographyImporter {
     wrapper.className = "dx-wrapper";
 
     wrapper.innerHTML = `
-      <div id="dx-typo-drag-handle" class="dx-header">
+      <div id="dx-drag-handle" class="dx-header">
         <h4>Custom Typography</h4>
         <div style="display:flex; gap:4px; align-items:center;">
-          <button id="dx-typo-btn-minimize" class="dx-typo-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
-          <button id="dx-typo-btn-close" class="dx-typo-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+          <button id="dx-btn-minimize" class="dx-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+          <button id="dx-btn-close" class="dx-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
         </div>
       </div>
       <div id="dx-typo-body" class="dx-body">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <div style="display:flex; gap:6px;">
-            <button id="dx-typo-btn-prompt" class="dx-typo-icon-btn" title="Copy AI Prompt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></button>
-            <button id="dx-typo-btn-refresh" class="dx-typo-icon-btn" title="Refresh"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
-            <button id="dx-typo-btn-clear" class="dx-typo-icon-btn" title="Clear"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-            <button id="dx-typo-btn-backup" class="dx-typo-icon-btn" title="Backup"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+            <button id="dx-btn-prompt" class="dx-icon-btn" title="Copy AI Prompt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></button>
+            <button id="dx-btn-refresh" class="dx-icon-btn" title="Refresh"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+            <button id="dx-btn-clear" class="dx-icon-btn" title="Clear"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+            <button id="dx-btn-backup" class="dx-icon-btn" title="Backup"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
           </div>
           <div style="display:flex; gap:4px;">
-            <button id="dx-typo-tab-ui" class="dx-tab-btn is-active">UI</button>
-            <button id="dx-typo-tab-raw" class="dx-tab-btn">RAW</button>
+            <button id="dx-tab-ui" class="dx-tab-btn is-active">UI</button>
+            <button id="dx-tab-raw" class="dx-tab-btn">RAW</button>
           </div>
         </div>
-        <div id="dx-typo-workspace" style="margin-bottom:12px;">
-          <div id="dx-typo-view-ui" style="display:block;">
+        <div id="dx-workspace" style="margin-bottom:12px;">
+          <div id="dx-view-ui" style="display:block;">
             <div style="display:flex; align-items:center; justify-content:center; background:#1e1e1e; padding:8px; border:1px solid #444; border-radius:4px; margin-bottom:12px;">
               <div style="color:#aaa; font-size: 11px; display:flex; align-items:center; gap: 6px;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -137,20 +135,17 @@ class ElementorDXTypographyImporter {
             </div>
             <div id="dx-typo-grid" style="display:flex; flex-wrap:wrap; gap:8px; max-height:220px; overflow-y:auto; padding: 4px 2px;"></div>
           </div>
-          <div id="dx-typo-view-raw" style="display:none;">
+          <div id="dx-view-raw" style="display:none;">
             <textarea id="dx-typo-json-input" rows="10"></textarea>
           </div>
         </div>
-        <button id="dx-typo-btn-update" class="dx-primary-btn">Apply Typography</button>
-        <div id="dx-typo-status" style="margin-top:8px; font-size:10px; color:#F2ADF3; display:none; text-align:center;"></div>
+        <button id="dx-btn-update" class="dx-primary-btn">Apply Typography</button>
+        <div id="dx-typo-status" style="margin-top:8px; font-size:10px; color:#61ce70; display:none; text-align:center;"></div>
       </div>
     `;
 
     this.shadow.appendChild(wrapper);
-    this.makeDraggable(
-      wrapper,
-      this.shadow.getElementById("dx-typo-drag-handle"),
-    );
+    this.makeDraggable(wrapper, this.shadow.getElementById("dx-drag-handle"));
     this.bindEvents();
 
     this.shadow
@@ -191,42 +186,161 @@ class ElementorDXTypographyImporter {
     };
   }
 
-  bindEvents() {
-    const tabUi = this.shadow.getElementById("dx-typo-tab-ui");
-    const tabRaw = this.shadow.getElementById("dx-typo-tab-raw");
-    const viewUi = this.shadow.getElementById("dx-typo-view-ui");
-    const viewRaw = this.shadow.getElementById("dx-typo-view-raw");
+  // ==========================================
+  // BULLETPROOF MERGE & SYNC TRANSACTION
+  // ==========================================
+  async prepareAndSaveTypography() {
+    const btn = this.shadow.getElementById("dx-btn-update");
+    if (btn) {
+      btn.innerText = "Syncing & Merging...";
+      btn.disabled = true;
+    }
 
-    this.shadow.getElementById("dx-typo-btn-close").onclick = (e) => {
+    let uiTypo = this.processTypographyArray(this.parseTypography());
+
+    if (!uiTypo) {
+      this.showStatus("Invalid JSON format.", "error");
+      if (btn) {
+        btn.innerText = "Invalid JSON Format";
+        this.evaluateApplyButtonState();
+      }
+      return;
+    }
+
+    try {
+      const cacheBuster = "?t=" + new Date().getTime();
+      const res = await fetch(this.apiUrl + cacheBuster, {
+        method: "GET",
+        headers: { "X-WP-Nonce": this.nonce },
+      });
+
+      let dbTypo = [];
+      if (res.ok) {
+        const data = await res.json();
+        dbTypo = data.custom_typography || data || [];
+      }
+
+      const mergedMap = new Map();
+      const usedIds = new Set();
+
+      const getSafeId = (desiredId, fallbackTitle) => {
+        if (desiredId && desiredId.trim() !== "" && !usedIds.has(desiredId)) {
+          return desiredId.trim();
+        }
+        let baseId =
+          (fallbackTitle || "typo")
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "") || "typo";
+        let newId = baseId;
+        let counter = 1;
+        while (usedIds.has(newId)) {
+          newId = `${baseId}-${counter}`;
+          counter++;
+        }
+        return newId;
+      };
+
+      const uiMap = new Map();
+      uiTypo.forEach((t) => {
+        if (t._id) uiMap.set(t._id, t);
+      });
+
+      // A. Process DB Typography (Tag Orphans & Merge Edits)
+      dbTypo.forEach((dbT) => {
+        if (!dbT._id) return;
+        let finalTitle = dbT.title || "Typography";
+        let finalTypoObj = { ...dbT };
+
+        const existsInUI = uiMap.has(dbT._id);
+        if (existsInUI) {
+          const updated = uiMap.get(dbT._id);
+          Object.keys(updated).forEach((key) => {
+            finalTypoObj[key] = updated[key];
+          });
+
+          if (updated.title && !updated.title.includes(`(${dbT._id})`)) {
+            finalTitle = updated.title;
+          } else if (updated.title) {
+            finalTitle = updated.title;
+          }
+        } else {
+          if (!finalTitle.includes(`(${dbT._id})`)) {
+            finalTitle = `${finalTitle} (${dbT._id})`;
+          }
+        }
+
+        finalTypoObj.title = finalTitle;
+        const finalId = getSafeId(dbT._id, finalTitle);
+        finalTypoObj._id = finalId;
+        usedIds.add(finalId);
+        mergedMap.set(finalId, finalTypoObj);
+      });
+
+      // B. Process entirely new typography added in the UI
+      uiTypo.forEach((uiT) => {
+        if (uiT._id && dbTypo.some((db) => db._id === uiT._id)) return;
+
+        const finalId = getSafeId(uiT._id, uiT.title);
+        uiT._id = finalId;
+        if (!uiT.title) uiT.title = "New Typography";
+        usedIds.add(finalId);
+        mergedMap.set(finalId, uiT);
+      });
+
+      const finalMergedTypo = Array.from(mergedMap.values());
+
+      this.originalTypography = finalMergedTypo;
+      this.setWorkspaceTypography(finalMergedTypo);
+      await this.updateElementor(finalMergedTypo);
+    } catch (e) {
+      this.showStatus("Merge & Sync failed.", "error");
+      if (btn) {
+        btn.innerText = "Apply Typography";
+        this.evaluateApplyButtonState();
+      }
+    }
+  }
+
+  bindEvents() {
+    const tabUi = this.shadow.getElementById("dx-tab-ui");
+    const tabRaw = this.shadow.getElementById("dx-tab-raw");
+    const viewUi = this.shadow.getElementById("dx-view-ui");
+    const viewRaw = this.shadow.getElementById("dx-view-raw");
+
+    this.shadow.getElementById("dx-btn-close").onclick = (e) => {
       e.preventDefault();
       this.close();
     };
-    this.shadow.getElementById("dx-typo-btn-minimize").onclick = (e) => {
+    this.shadow.getElementById("dx-btn-minimize").onclick = (e) => {
       e.preventDefault();
       const body = this.shadow.getElementById("dx-typo-body");
       const isHidden = body.style.display === "none";
       body.style.display = isHidden ? "block" : "none";
-      this.shadow.getElementById("dx-typo-btn-minimize").innerHTML = isHidden
+      this.shadow.getElementById("dx-btn-minimize").innerHTML = isHidden
         ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>'
         : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>';
     };
 
-    this.shadow.getElementById("dx-typo-btn-prompt").onclick = (e) => {
+    this.shadow.getElementById("dx-btn-prompt").onclick = (e) => {
       e.preventDefault();
       navigator.clipboard
-        .writeText("Generate a complete responsive typography token system...")
+        .writeText(
+          `Generate a complete responsive typography token system for Elementor.\nRequirements:\n- Output MUST be a valid JSON array.\n- Each object must include "title" and "typography_typography": "custom".`,
+        )
         .then(() => this.showStatus("Prompt copied!", "success"));
     };
-    this.shadow.getElementById("dx-typo-btn-refresh").onclick = async (e) => {
+
+    this.shadow.getElementById("dx-btn-refresh").onclick = async (e) => {
       e.preventDefault();
       await this.fetchInitialData();
       this.showStatus("Reloaded", "success");
     };
-    this.shadow.getElementById("dx-typo-btn-clear").onclick = (e) => {
+    this.shadow.getElementById("dx-btn-clear").onclick = (e) => {
       e.preventDefault();
       if (confirm("Clear all typography?")) this.setWorkspaceTypography([]);
     };
-    this.shadow.getElementById("dx-typo-btn-backup").onclick = (e) => {
+    this.shadow.getElementById("dx-btn-backup").onclick = (e) => {
       e.preventDefault();
       const dataStr =
         "data:text/json;charset=utf-8," +
@@ -269,10 +383,9 @@ class ElementorDXTypographyImporter {
       tabUi.className = "dx-tab-btn";
     };
 
-    this.shadow.getElementById("dx-typo-btn-update").onclick = (e) => {
+    this.shadow.getElementById("dx-btn-update").onclick = (e) => {
       e.preventDefault();
-      const typo = this.processTypographyArray(this.parseTypography());
-      if (typo) this.updateElementor(typo);
+      this.prepareAndSaveTypography();
     };
   }
 
@@ -384,23 +497,43 @@ class ElementorDXTypographyImporter {
   }
 
   evaluateApplyButtonState() {
-    const btn = this.shadow.getElementById("dx-typo-btn-update");
+    const btn = this.shadow.getElementById("dx-btn-update");
     if (!btn) return;
+
     const currentTypo = this.parseTypography();
+
+    // Explicit UI feedback for broken JSON
+    if (
+      currentTypo === null &&
+      this.shadow.getElementById("dx-typo-json-input").value.trim() !== ""
+    ) {
+      btn.disabled = true;
+      btn.innerText = "Invalid JSON Format";
+      return;
+    }
+
     if (
       currentTypo !== null &&
       JSON.stringify(currentTypo) !== JSON.stringify(this.originalTypography)
     ) {
       btn.disabled = false;
+      btn.innerText = "Apply Typography";
     } else {
       btn.disabled = true;
+      btn.innerText = "Apply Typography";
     }
   }
 
   parseTypography() {
     try {
-      const raw = this.shadow.getElementById("dx-typo-json-input").value;
+      let raw = this.shadow.getElementById("dx-typo-json-input").value;
       if (!raw.trim()) return [];
+
+      raw = raw
+        .replace(/```json/gi, "")
+        .replace(/```/g, "")
+        .trim();
+
       let data = JSON.parse(raw);
       if (data && typeof data === "object" && !Array.isArray(data)) {
         if (data.custom_typography) data = data.custom_typography;
@@ -415,36 +548,46 @@ class ElementorDXTypographyImporter {
     if (!Array.isArray(typography)) return typography;
     let modified = false;
     const usedIds = new Set();
+    const processed = [];
+
     typography.forEach((t) => {
-      if (t && t._id && t._id.trim() !== "") usedIds.add(t._id.trim());
-    });
-    const processed = typography.map((t) => {
       if (t && typeof t === "object") {
-        if (!t._id || t._id.trim() === "") {
+        let targetId = t._id && t._id.trim() !== "" ? t._id.trim() : null;
+
+        if (!targetId) {
           let baseId =
             (t.title || "typo")
               .toLowerCase()
               .replace(/[^a-z0-9]+/g, "-")
               .replace(/(^-|-$)/g, "") || "typo";
-          let counter = 1,
-            newId = baseId;
+          let newId = baseId;
+          let counter = 1;
           while (usedIds.has(newId)) {
             newId = `${baseId}-${counter}`;
             counter++;
           }
-          t._id = newId;
-          usedIds.add(newId);
+          targetId = newId;
           modified = true;
         }
+
+        if (usedIds.has(targetId)) {
+          modified = true;
+          return;
+        }
+
+        t._id = targetId;
+        usedIds.add(targetId);
+        processed.push(t);
       }
-      return t;
     });
-    if (modified)
+
+    if (modified) {
       this.shadow.getElementById("dx-typo-json-input").value = JSON.stringify(
         processed,
         null,
         4,
       );
+    }
     return processed;
   }
 
@@ -460,13 +603,14 @@ class ElementorDXTypographyImporter {
 
   async fetchInitialData() {
     try {
-      const res = await fetch(this.apiUrl, {
+      const cacheBuster = "?t=" + new Date().getTime();
+      const res = await fetch(this.apiUrl + cacheBuster, {
         method: "GET",
         headers: { "X-WP-Nonce": this.nonce },
       });
       if (res.ok) {
         const data = await res.json();
-        this.originalTypography = data.custom_typography || data;
+        this.originalTypography = data.custom_typography || data || [];
         this.buildOriginalTokenMap(this.originalTypography);
         this.setWorkspaceTypography(this.originalTypography);
       }
@@ -512,10 +656,8 @@ class ElementorDXTypographyImporter {
 
   async updateElementor(custom_typography) {
     const btn = this.shadow.getElementById("dx-typo-btn-update");
-    if (btn) {
-      btn.innerText = "Applying...";
-      btn.disabled = true;
-    }
+    if (btn) btn.innerText = "Applying...";
+
     try {
       const res = await fetch(this.apiUrl, {
         method: "POST",
@@ -546,7 +688,7 @@ class ElementorDXTypographyImporter {
   showStatus(msg, type) {
     const el = this.shadow.getElementById("dx-typo-status");
     el.style.display = "block";
-    el.style.color = type === "error" ? "#e74c3c" : "#F2ADF3";
+    el.style.color = type === "error" ? "#ff7777" : "#61ce70";
     el.innerText = msg;
     clearTimeout(this.statusTimer);
     this.statusTimer = setTimeout(() => {

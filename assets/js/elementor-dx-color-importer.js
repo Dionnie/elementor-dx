@@ -43,7 +43,6 @@ class ElementorDXColorImporter {
   injectFloatingUI() {
     if (document.getElementById("dx-color-host")) return;
 
-    // Create the Shadow DOM Host Portal
     this.host = document.createElement("div");
     this.host.id = "dx-color-host";
     this.host.style.cssText =
@@ -53,7 +52,6 @@ class ElementorDXColorImporter {
 
     const styles = document.createElement("style");
     styles.innerHTML = `
-      /* Theme Immunity Reset */
       :host { all: initial; font-family: sans-serif; }
       * { box-sizing: border-box; }
       button, input, textarea { 
@@ -62,7 +60,7 @@ class ElementorDXColorImporter {
         box-shadow: none; outline: none; text-transform: none; font-family: inherit;
       }
 
-      /* Specific UI Styles */
+      /* Classic Dark Mode Wrapper */
       .dx-wrapper {
         position: fixed; top: 60px; right: 40px; width: 340px; background: #2b2b2b; color: #fff;
         border: 1px solid #444; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -78,32 +76,32 @@ class ElementorDXColorImporter {
       .dx-body { padding: 12px; }
 
       .dx-icon-btn { cursor: pointer; border: 1px solid #444; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-      .dx-icon-btn:hover { background: #2A0624; color: #F2ADF3; border-color: #620856; }
+      .dx-icon-btn:hover { background: #333; color: #fff; border-color: #ED01EE; }
       .dx-icon-btn:active { transform: scale(0.95); }
       
       .dx-min-btn { cursor: pointer; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-right: -4px; }
       .dx-min-btn:hover { background: #333; color: #fff; }
       
       .dx-tab-btn { background: #222; color: #aaa; padding: 6px 10px; border-radius: 3px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 10px; }
-      .dx-tab-btn:hover { background: #333; color: #fff; }
-      .dx-tab-btn.is-active { background: #F2ADF3; color: #2A0624; }
+      .dx-tab-btn:hover:not(.is-active) { background: #333; color: #fff; }
+      .dx-tab-btn.is-active { background: #ED01EE; color: #fff; } /* Elementor Pink Accent */
       
-      .dx-radio-group { display: flex; background: #222; border: 1px solid #555; border-radius: 4px; overflow: hidden; font-size: 11px; }
+      .dx-radio-group { display: flex; background: #222; border: 1px solid #444; border-radius: 4px; overflow: hidden; font-size: 11px; }
       .dx-radio-label { margin: 0; cursor: pointer; display: block; }
       .dx-radio-label input { display: none; }
       .dx-radio-label span { display: block; padding: 6px 12px; color: #aaa; transition: 0.2s; font-weight: 500; }
-      .dx-radio-label input:checked + span { background: #F2ADF3; color: #2A0624; font-weight: bold; }
-      .dx-radio-label:hover span { background: #333; }
+      .dx-radio-label input:checked + span { background: #ED01EE; color: #fff; font-weight: bold; }
+      .dx-radio-label:hover span { background: #333; color: #fff; }
       
       .dx-color-swatch { width: 100%; aspect-ratio: 1; border: 1px solid #444; border-radius: 4px; cursor: pointer; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.4); transition: transform 0.1s; }
-      .dx-color-swatch:hover { transform: scale(1.15); z-index: 2; border-color: #F2ADF3; }
+      .dx-color-swatch:hover { transform: scale(1.15); z-index: 2; border-color: #ED01EE; }
       
-      .dx-primary-btn { background: #F2ADF3; color: #2A0624; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px; }
-      .dx-primary-btn:hover:not(:disabled) { background: #620856; color: #F2ADF3; }
+      .dx-primary-btn { background: #ED01EE; color: #fff; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px; }
+      .dx-primary-btn:hover:not(:disabled) { background: #620856; } /* Burgundy Hover */
       .dx-primary-btn:active:not(:disabled) { transform: scale(0.98); }
-      .dx-primary-btn:disabled { background: #333; color: #666; border: 1px solid #444; cursor: not-allowed; }
+      .dx-primary-btn:disabled { background: #333; color: #666; border: 1px solid #444; cursor: not-allowed; filter: none; }
 
-      textarea { width: 100%; background: #1e1e1e; color: #d4d4d4; border: 1px solid #444; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 10px; resize: vertical; box-sizing: border-box; }
+      textarea { width: 100%; background: #1e1e1e; color: #d4d4d4; border: 1px solid #444; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 10px; resize: vertical; box-sizing: border-box; outline: none;}
       svg { display: block; }
     `;
     this.shadow.appendChild(styles);
@@ -150,7 +148,7 @@ class ElementorDXColorImporter {
           </div>
         </div>
         <button id="dx-btn-update" class="dx-primary-btn">Apply Colors</button>
-        <div id="dx-color-status" style="margin-top:8px; font-size:10px; color:#F2ADF3; display:none; text-align:center;"></div>
+        <div id="dx-color-status" style="margin-top:8px; font-size:10px; color:#61ce70; display:none; text-align:center;"></div>
       </div>
     `;
 
@@ -194,6 +192,123 @@ class ElementorDXColorImporter {
       document.onmousemove = null;
       handle.style.cursor = "grab";
     };
+  }
+
+  // ==========================================
+  // BULLETPROOF MERGE & SYNC TRANSACTION
+  // ==========================================
+  async prepareAndSaveColors() {
+    const btn = this.shadow.getElementById("dx-btn-update");
+    if (btn) {
+      btn.innerText = "Syncing & Merging...";
+      btn.disabled = true;
+    }
+
+    let uiColors = this.processColorsArray(this.parseColors());
+
+    if (!uiColors) {
+      this.showStatus("Invalid JSON format.", "error");
+      if (btn) {
+        btn.innerText = "Invalid JSON Format";
+        this.evaluateApplyButtonState();
+      }
+      return;
+    }
+
+    try {
+      // Fetch DB Truth
+      const cacheBuster = "?t=" + new Date().getTime();
+      const res = await fetch(this.apiUrl + cacheBuster, {
+        method: "GET",
+        headers: { "X-WP-Nonce": this.nonce },
+      });
+
+      let dbColors = [];
+      if (res.ok) {
+        const data = await res.json();
+        dbColors = data.custom_colors || [];
+      }
+
+      // Strict ID Collision Mapping
+      const mergedMap = new Map();
+      const usedIds = new Set();
+
+      const getSafeId = (desiredId, fallbackTitle) => {
+        if (desiredId && desiredId.trim() !== "" && !usedIds.has(desiredId)) {
+          return desiredId.trim();
+        }
+        let baseId =
+          (fallbackTitle || "color")
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "") || "color";
+        let newId = baseId;
+        let counter = 1;
+        while (usedIds.has(newId)) {
+          newId = `${baseId}-${counter}`;
+          counter++;
+        }
+        return newId;
+      };
+
+      // A. Process DB Colors (Tag Orphans)
+      dbColors.forEach((dbC) => {
+        if (!dbC._id) return;
+        let finalTitle = dbC.title || "Color";
+
+        const existsInUI = uiColors.some((uiC) => uiC._id === dbC._id);
+        if (!existsInUI) {
+          // Rescue Missing Variable: Append its ID to mark as legacy
+          if (!finalTitle.includes(`(${dbC._id})`)) {
+            finalTitle = `${finalTitle} (${dbC._id})`;
+          }
+        }
+
+        const finalId = getSafeId(dbC._id, finalTitle);
+        usedIds.add(finalId);
+        mergedMap.set(finalId, {
+          _id: finalId,
+          title: finalTitle,
+          color: dbC.color,
+        });
+      });
+
+      // B. Process UI Colors (Merge Updates & Append New)
+      uiColors.forEach((uiC) => {
+        if (!uiC._id) return;
+
+        if (mergedMap.has(uiC._id)) {
+          // Update existing DB entry safely
+          const existing = mergedMap.get(uiC._id);
+          existing.color = uiC.color || existing.color;
+          if (uiC.title && !uiC.title.includes(`(${uiC._id})`)) {
+            existing.title = uiC.title;
+          }
+          mergedMap.set(uiC._id, existing);
+        } else {
+          // Append entirely new color
+          const finalId = getSafeId(uiC._id, uiC.title);
+          usedIds.add(finalId);
+          mergedMap.set(finalId, {
+            _id: finalId,
+            title: uiC.title || "New Color",
+            color: uiC.color || "transparent",
+          });
+        }
+      });
+
+      const finalMergedColors = Array.from(mergedMap.values());
+
+      this.originalKitColors = finalMergedColors;
+      this.setWorkspaceColors(finalMergedColors);
+      await this.updateElementor(finalMergedColors);
+    } catch (e) {
+      this.showStatus("Merge & Sync failed.", "error");
+      if (btn) {
+        btn.innerText = "Apply Colors";
+        this.evaluateApplyButtonState();
+      }
+    }
   }
 
   bindEvents() {
@@ -275,8 +390,7 @@ class ElementorDXColorImporter {
 
     this.shadow.getElementById("dx-btn-update").onclick = (e) => {
       e.preventDefault();
-      const colors = this.processColorsArray(this.parseColors());
-      if (colors) this.updateElementor(colors);
+      this.prepareAndSaveColors();
     };
   }
 
@@ -332,21 +446,42 @@ class ElementorDXColorImporter {
   evaluateApplyButtonState() {
     const btn = this.shadow.getElementById("dx-btn-update");
     if (!btn) return;
+
     const currentColors = this.parseColors();
+
+    // Explicit UI feedback for broken JSON
+    if (
+      currentColors === null &&
+      this.shadow.getElementById("dx-color-json-input").value.trim() !== ""
+    ) {
+      btn.disabled = true;
+      btn.innerText = "Invalid JSON Format";
+      return;
+    }
+
     if (
       currentColors !== null &&
       JSON.stringify(currentColors) !== JSON.stringify(this.originalKitColors)
     ) {
       btn.disabled = false;
+      btn.innerText = "Apply Colors";
     } else {
       btn.disabled = true;
+      btn.innerText = "Apply Colors";
     }
   }
 
   parseColors() {
     try {
-      const raw = this.shadow.getElementById("dx-color-json-input").value;
+      let raw = this.shadow.getElementById("dx-color-json-input").value;
       if (!raw.trim()) return [];
+
+      // Auto-strip Markdown if user accidentally pasted it from AI
+      raw = raw
+        .replace(/```json/gi, "")
+        .replace(/```/g, "")
+        .trim();
+
       let data = JSON.parse(raw);
       if (data && typeof data === "object" && !Array.isArray(data)) {
         if (data.custom_colors) data = data.custom_colors;
@@ -362,34 +497,48 @@ class ElementorDXColorImporter {
     if (!Array.isArray(colors)) return colors;
     let modified = false;
     const usedIds = new Set();
+    const processed = [];
+
     colors.forEach((c) => {
-      if (c && c._id && c._id.trim() !== "") usedIds.add(c._id.trim());
-    });
-    const processed = colors.map((c) => {
-      if (c && typeof c === "object" && (!c._id || c._id.trim() === "")) {
-        let newId =
-          (c.title || "color")
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)/g, "") || "color";
-        let counter = 1,
-          baseId = newId;
-        while (usedIds.has(newId)) {
-          newId = `${baseId}-${counter}`;
-          counter++;
+      if (c && typeof c === "object") {
+        let targetId = c._id && c._id.trim() !== "" ? c._id.trim() : null;
+
+        // Auto-Kebab Case generation if ID is completely missing
+        if (!targetId) {
+          let baseId =
+            (c.title || "color")
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/(^-|-$)/g, "") || "color";
+          let newId = baseId;
+          let counter = 1;
+          while (usedIds.has(newId)) {
+            newId = `${baseId}-${counter}`;
+            counter++;
+          }
+          targetId = newId;
+          modified = true;
         }
-        c._id = newId;
-        usedIds.add(newId);
-        modified = true;
+
+        // Strict Removal of Duplicate IDs
+        if (usedIds.has(targetId)) {
+          modified = true;
+          return; // Instantly drops the duplicate object
+        }
+
+        c._id = targetId;
+        usedIds.add(targetId);
+        processed.push(c);
       }
-      return c;
     });
-    if (modified)
+
+    if (modified) {
       this.shadow.getElementById("dx-color-json-input").value = JSON.stringify(
         processed,
         null,
         4,
       );
+    }
     return processed;
   }
 
@@ -405,7 +554,8 @@ class ElementorDXColorImporter {
 
   async fetchInitialData() {
     try {
-      const res = await fetch(this.apiUrl, {
+      const cacheBuster = "?t=" + new Date().getTime();
+      const res = await fetch(this.apiUrl + cacheBuster, {
         method: "GET",
         headers: { "X-WP-Nonce": this.nonce },
       });
@@ -508,7 +658,7 @@ class ElementorDXColorImporter {
   showStatus(msg, type) {
     const el = this.shadow.getElementById("dx-color-status");
     el.style.display = "block";
-    el.style.color = type === "error" ? "#e74c3c" : "#F2ADF3";
+    el.style.color = type === "error" ? "#ff7777" : "#61ce70";
     el.innerText = msg;
     clearTimeout(this.statusTimer);
     this.statusTimer = setTimeout(() => {
