@@ -47,17 +47,26 @@ class ElementorDXTypographyImporter {
       #dx-typo-importer-wrapper button, #dx-typo-importer-wrapper input, #dx-typo-importer-wrapper textarea { appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; outline: none !important; text-transform: none !important; }
       #dx-typo-importer-wrapper button::before, #dx-typo-importer-wrapper button::after { display: none !important; }
 
-      .dx-typo-icon-btn { cursor: pointer !important; border: 1px solid #444 !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; }
-      .dx-typo-icon-btn:hover { background: #2A0624 !important; color: #F2ADF3 !important; border-color: #620856 !important; }
-      .dx-typo-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; }
-      .dx-typo-min-btn:hover { background: #333 !important; color: #fff !important; }
+      /* Specific UI Styles */
+      #dx-typo-importer-wrapper .dx-typo-icon-btn { cursor: pointer !important; border: 1px solid #444 !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; background: transparent !important; }
+      #dx-typo-importer-wrapper .dx-typo-icon-btn:hover { background: #2A0624 !important; color: #F2ADF3 !important; border-color: #620856 !important; }
+      #dx-typo-importer-wrapper .dx-typo-icon-btn:active { transform: scale(0.95) !important; }
       
-      .dx-typo-pill { padding: 8px 12px !important; background: #222 !important; border: 1px solid #444 !important; border-radius: 20px !important; font-size: 11px !important; color: #ddd !important; cursor: pointer !important; transition: all 0.2s !important; user-select: none !important; white-space: nowrap !important; box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important; }
-      .dx-typo-pill:hover { background: #2A0624 !important; border-color: #F2ADF3 !important; color: #F2ADF3 !important; transform: translateY(-1px) !important; box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important; }
+      #dx-typo-importer-wrapper .dx-typo-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; background: transparent !important; border: none !important; }
+      #dx-typo-importer-wrapper .dx-typo-min-btn:hover { background: #333 !important; color: #fff !important; }
       
-      .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: 0.2s !important; width: 100% !important; display: flex !important; justify-content: center !important; letter-spacing: 0.5px !important;}
-      .dx-primary-btn:hover { background: #620856 !important; color: #F2ADF3 !important; }
-      .dx-primary-btn:disabled { opacity: 0.5 !important; cursor: not-allowed !important; filter: grayscale(100%) !important; }
+      #dx-typo-importer-wrapper .dx-tab-btn { background: #222 !important; border: none !important; color: #aaa !important; padding: 6px 10px !important; border-radius: 3px !important; font-weight: bold !important; cursor: pointer !important; transition: all 0.2s !important; }
+      #dx-typo-importer-wrapper .dx-tab-btn:hover { background: #333 !important; color: #fff !important; }
+      #dx-typo-importer-wrapper .dx-tab-btn.is-active { background: #F2ADF3 !important; color: #2A0624 !important; }
+      
+      #dx-typo-importer-wrapper .dx-typo-pill { padding: 8px 12px !important; background: #222 !important; border: 1px solid #444 !important; border-radius: 20px !important; font-size: 11px !important; color: #ddd !important; cursor: pointer !important; transition: all 0.2s !important; user-select: none !important; white-space: nowrap !important; box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important; margin: 0 !important; }
+      #dx-typo-importer-wrapper .dx-typo-pill:hover { background: #2A0624 !important; border-color: #F2ADF3 !important; color: #F2ADF3 !important; transform: translateY(-1px) !important; box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important; }
+      #dx-typo-importer-wrapper .dx-typo-pill:active { transform: translateY(1px) !important; box-shadow: none !important; }
+      
+      #dx-typo-importer-wrapper .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border: none !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: all 0.2s !important; width: 100% !important; display: flex !important; justify-content: center !important; align-items: center !important; letter-spacing: 0.5px !important; }
+      #dx-typo-importer-wrapper .dx-primary-btn:hover:not(:disabled) { background: #620856 !important; color: #F2ADF3 !important; }
+      #dx-typo-importer-wrapper .dx-primary-btn:active:not(:disabled) { transform: scale(0.98) !important; }
+      #dx-typo-importer-wrapper .dx-primary-btn:disabled { background: #333 !important; color: #666 !important; border: 1px solid #444 !important; cursor: not-allowed !important; filter: none !important; opacity: 1 !important; }
     `;
     document.head.appendChild(styles);
 
@@ -86,8 +95,8 @@ class ElementorDXTypographyImporter {
             <button id="dx-typo-btn-backup" class="dx-typo-icon-btn" title="Backup"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
           </div>
           <div style="display:flex !important; gap:4px !important; font-size:10px !important;">
-            <button id="dx-typo-tab-ui" style="background:#F2ADF3 !important; color:#2A0624 !important; padding:6px 10px !important; border-radius:3px !important; font-weight:bold !important; cursor:pointer !important;">UI</button>
-            <button id="dx-typo-tab-raw" style="background:#222 !important; color:#aaa !important; padding:6px 10px !important; border-radius:3px !important; font-weight:bold !important; cursor:pointer !important;">RAW</button>
+            <button id="dx-typo-tab-ui" class="dx-tab-btn is-active">UI</button>
+            <button id="dx-typo-tab-raw" class="dx-tab-btn">RAW</button>
           </div>
         </div>
         <div id="dx-typo-workspace" style="margin-bottom:12px !important;">
@@ -101,7 +110,7 @@ class ElementorDXTypographyImporter {
             <div id="dx-typo-grid" style="display:flex !important; flex-wrap:wrap !important; gap:8px !important; max-height:220px !important; overflow-y:auto !important; padding: 4px 2px !important;"></div>
           </div>
           <div id="dx-typo-view-raw" style="display:none !important;">
-            <textarea id="dx-typo-json-input" rows="10" style="width:100% !important; background:#1e1e1e !important; color:#d4d4d4 !important; border:1px solid #444 !important; border-radius:4px !important; padding:8px !important; font-family:monospace !important; font-size:10px !important; resize:vertical !important; box-sizing: border-box !important; outline:none !important;"></textarea>
+            <textarea id="dx-typo-json-input" rows="10" style="width:100% !important; background:#1e1e1e !important; color:#d4d4d4 !important; border:1px solid #444 !important; border-radius:4px !important; padding:8px !important; font-family:monospace !important; font-size:10px !important; resize:vertical !important; box-sizing: border-box !important; outline:none !important; margin:0 !important;"></textarea>
           </div>
         </div>
         <button id="dx-typo-btn-update" class="dx-primary-btn">Apply Typography</button>
@@ -218,10 +227,8 @@ class ElementorDXTypographyImporter {
       this.currentView = "ui";
       viewUi.style.setProperty("display", "block", "important");
       viewRaw.style.setProperty("display", "none", "important");
-      tabUi.style.setProperty("background", "#F2ADF3", "important");
-      tabUi.style.setProperty("color", "#2A0624", "important");
-      tabRaw.style.setProperty("background", "#222", "important");
-      tabRaw.style.setProperty("color", "#aaa", "important");
+      tabUi.className = "dx-tab-btn is-active";
+      tabRaw.className = "dx-tab-btn";
       const typo = this.parseTypography();
       if (typo) {
         this.processTypographyArray(typo);
@@ -235,10 +242,8 @@ class ElementorDXTypographyImporter {
       this.currentView = "raw";
       viewUi.style.setProperty("display", "none", "important");
       viewRaw.style.setProperty("display", "block", "important");
-      tabRaw.style.setProperty("background", "#F2ADF3", "important");
-      tabRaw.style.setProperty("color", "#2A0624", "important");
-      tabUi.style.setProperty("background", "#222", "important");
-      tabUi.style.setProperty("color", "#aaa", "important");
+      tabRaw.className = "dx-tab-btn is-active";
+      tabUi.className = "dx-tab-btn";
     };
 
     document.getElementById("dx-typo-btn-update").onclick = (e) => {

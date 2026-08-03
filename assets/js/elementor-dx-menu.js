@@ -30,57 +30,63 @@ class ElementorDXGridMenu {
     styles.id = "dx-menu-styles";
     styles.innerHTML = `
       /* Theme Immunity Reset */
-      #dx-menu-window-wrapper, #dx-menu-window-wrapper *, .dx-master-trigger-btn, .dx-master-trigger-btn * {
+      #dx-menu-window-wrapper, #dx-menu-window-wrapper * {
         box-sizing: border-box !important; font-family: sans-serif !important; letter-spacing: normal !important; line-height: 1.5 !important;
       }
-      #dx-menu-window-wrapper button, .dx-master-trigger-btn {
+      #dx-menu-window-wrapper button {
         appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; outline: none !important; text-transform: none !important;
       }
-      #dx-menu-window-wrapper button::before, #dx-menu-window-wrapper button::after, .dx-master-trigger-btn::before, .dx-master-trigger-btn::after { display: none !important; }
+      #dx-menu-window-wrapper button::before, #dx-menu-window-wrapper button::after { display: none !important; }
 
-      /* Core Styles */
+      /* Master Trigger Button */
       .dx-master-trigger-btn {
         position: fixed !important; bottom: 30px !important; right: 30px !important; z-index: 99997 !important;
         width: 56px !important; height: 56px !important; border-radius: 50% !important;
         background: #F2ADF3 !important; color: #2A0624 !important;
+        border: none !important; margin: 0 !important; padding: 0 !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
         display: flex !important; align-items: center !important; justify-content: center !important;
         transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s, background 0.2s, color 0.2s !important;
+        cursor: pointer !important; outline: none !important; appearance: none !important; -webkit-appearance: none !important;
       }
       .dx-master-trigger-btn:hover { background: #620856 !important; color: #F2ADF3 !important; transform: scale(1.05) !important; }
+      .dx-master-trigger-btn:active { transform: scale(0.95) !important; }
       .dx-master-trigger-btn.is-hidden { transform: scale(0) !important; opacity: 0 !important; pointer-events: none !important; }
 
-      .dx-menu-min-btn { color: #aaa !important; padding: 6px !important; cursor: pointer !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; }
-      .dx-menu-min-btn:hover { background: #333 !important; color: #fff !important; }
+      /* Specific UI Styles */
+      #dx-menu-window-wrapper .dx-menu-min-btn { color: #aaa !important; padding: 6px !important; cursor: pointer !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; }
+      #dx-menu-window-wrapper .dx-menu-min-btn:hover { background: #333 !important; color: #fff !important; }
 
-      .dx-menu-header-screen {
+      #dx-menu-window-wrapper .dx-menu-header-screen {
         background: #1e1e1e !important; border: 1px solid #333 !important; border-radius: 4px !important; padding: 6px 8px !important;
         text-align: center !important; font-size: 10px !important; color: #F2ADF3 !important;
         font-weight: bold !important; text-transform: uppercase !important; letter-spacing: 0.5px !important;
         margin-bottom: 12px !important; transition: color 0.2s !important; min-height: 14px !important;
       }
 
-      .dx-menu-grid-container { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+      #dx-menu-window-wrapper .dx-menu-grid-container { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
 
-      .dx-menu-grid-item {
+      #dx-menu-window-wrapper .dx-menu-grid-item {
         width: 100% !important; aspect-ratio: 1 !important; border-radius: 6px !important;
         background: #1e1e1e !important; color: #a4afb7 !important; border: 1px solid #444 !important;
         cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;
-        transition: all 0.2s !important;
+        transition: all 0.2s !important; padding: 0 !important;
       }
       
-      .dx-menu-grid-item:hover { 
+      #dx-menu-window-wrapper .dx-menu-grid-item:hover { 
         background: #2A0624 !important; color: #F2ADF3 !important; border-color: #620856 !important; 
         transform: translateY(-2px) !important; box-shadow: 0 4px 8px rgba(0,0,0,0.4) !important; 
       }
+
+      #dx-menu-window-wrapper .dx-menu-grid-item:active { transform: scale(0.95) !important; box-shadow: none !important; }
       
-      .dx-menu-grid-item.is-active-tool {
+      #dx-menu-window-wrapper .dx-menu-grid-item.is-active-tool {
         background: #2A0624 !important; color: #F2ADF3 !important; border-color: #F2ADF3 !important;
         box-shadow: inset 0 0 0 1px #F2ADF3, 0 4px 8px rgba(0,0,0,0.4) !important;
       }
 
       .dx-master-trigger-btn svg { width: 24px !important; height: 24px !important; min-width: 24px !important; min-height: 24px !important; fill: none !important; stroke: currentColor !important; stroke-width: 2 !important; display: block !important; }
-      .dx-menu-grid-item svg { width: 18px !important; height: 18px !important; min-width: 18px !important; min-height: 18px !important; fill: none !important; stroke: currentColor !important; stroke-width: 2 !important; display: block !important; }
+      #dx-menu-window-wrapper .dx-menu-grid-item svg { width: 18px !important; height: 18px !important; min-width: 18px !important; min-height: 18px !important; fill: none !important; stroke: currentColor !important; stroke-width: 2 !important; display: block !important; }
     `;
     document.head.appendChild(styles);
   }

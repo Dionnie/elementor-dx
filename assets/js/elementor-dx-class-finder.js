@@ -58,14 +58,16 @@ class ElementorDXClassFinder {
       #dx-classfinder-wrapper button, #dx-classfinder-wrapper input { appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; outline: none !important; text-transform: none !important; }
       #dx-classfinder-wrapper button::before, #dx-classfinder-wrapper button::after { display: none !important; }
 
-      .dx-cf-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; }
-      .dx-cf-min-btn:hover { background: #333 !important; color: #fff !important; }
+      /* Specific UI Styles */
+      #dx-classfinder-wrapper .dx-cf-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; background: transparent !important; border: none !important; }
+      #dx-classfinder-wrapper .dx-cf-min-btn:hover { background: #333 !important; color: #fff !important; }
       
-      .dx-cf-input { width: 100% !important; background: #1e1e1e !important; color: #ddd !important; border: 1px solid #444 !important; border-radius: 4px !important; padding: 10px 12px !important; font-size: 11px !important; font-family: monospace !important; transition: border-color 0.2s !important; }
-      .dx-cf-input:focus { border-color: #F2ADF3 !important; }
+      #dx-classfinder-wrapper .dx-cf-input { width: 100% !important; background: #1e1e1e !important; color: #ddd !important; border: 1px solid #444 !important; border-radius: 4px !important; padding: 10px 12px !important; font-size: 11px !important; font-family: monospace !important; transition: border-color 0.2s !important; margin: 0 !important; }
+      #dx-classfinder-wrapper .dx-cf-input:focus { border-color: #F2ADF3 !important; outline: none !important; }
       
-      .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: 0.2s !important; width: 100% !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 6px !important; letter-spacing: 0.5px !important; }
-      .dx-primary-btn:hover { background: #620856 !important; color: #F2ADF3 !important; }
+      #dx-classfinder-wrapper .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border: none !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: all 0.2s !important; width: 100% !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 6px !important; letter-spacing: 0.5px !important; }
+      #dx-classfinder-wrapper .dx-primary-btn:hover { background: #620856 !important; color: #F2ADF3 !important; }
+      #dx-classfinder-wrapper .dx-primary-btn:active { transform: scale(0.98) !important; }
     `;
     document.head.appendChild(styles);
 

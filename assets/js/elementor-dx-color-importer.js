@@ -46,24 +46,32 @@ class ElementorDXColorImporter {
       #dx-color-importer-wrapper button, #dx-color-importer-wrapper input, #dx-color-importer-wrapper textarea { appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; outline: none !important; text-transform: none !important; }
       #dx-color-importer-wrapper button::before, #dx-color-importer-wrapper button::after { display: none !important; }
 
-      .dx-icon-btn { cursor: pointer !important; border: 1px solid #444 !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; }
-      .dx-icon-btn:hover { background: #2A0624 !important; color: #F2ADF3 !important; border-color: #620856 !important; }
-      .dx-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; }
-      .dx-min-btn:hover { background: #333 !important; color: #fff !important; }
+      /* Specific UI Styles */
+      #dx-color-importer-wrapper .dx-icon-btn { cursor: pointer !important; border: 1px solid #444 !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; background: transparent !important; }
+      #dx-color-importer-wrapper .dx-icon-btn:hover { background: #2A0624 !important; color: #F2ADF3 !important; border-color: #620856 !important; }
+      #dx-color-importer-wrapper .dx-icon-btn:active { transform: scale(0.95) !important; }
       
-      .dx-radio-group { display: flex !important; background: #222 !important; border: 1px solid #555 !important; border-radius: 4px !important; overflow: hidden !important; font-size: 11px !important; }
-      .dx-radio-label { margin: 0 !important; cursor: pointer !important; display: block !important; }
-      .dx-radio-label input { display: none !important; }
-      .dx-radio-label span { display: block !important; padding: 6px 12px !important; color: #aaa !important; transition: 0.2s !important; font-weight: 500 !important; }
-      .dx-radio-label input:checked + span { background: #F2ADF3 !important; color: #2A0624 !important; font-weight: bold !important; }
-      .dx-radio-label:hover span { background: #333 !important; }
+      #dx-color-importer-wrapper .dx-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; background: transparent !important; border: none !important; }
+      #dx-color-importer-wrapper .dx-min-btn:hover { background: #333 !important; color: #fff !important; }
       
-      .dx-color-swatch { width: 100% !important; aspect-ratio: 1 !important; border: 1px solid #444 !important; border-radius: 4px !important; cursor: pointer !important; position: relative !important; box-shadow: 0 2px 4px rgba(0,0,0,0.4) !important; transition: transform 0.1s !important; }
-      .dx-color-swatch:hover { transform: scale(1.15) !important; z-index: 2 !important; border-color: #F2ADF3 !important; }
+      #dx-color-importer-wrapper .dx-tab-btn { background: #222 !important; border: none !important; color: #aaa !important; padding: 6px 10px !important; border-radius: 3px !important; font-weight: bold !important; cursor: pointer !important; transition: all 0.2s !important; }
+      #dx-color-importer-wrapper .dx-tab-btn:hover { background: #333 !important; color: #fff !important; }
+      #dx-color-importer-wrapper .dx-tab-btn.is-active { background: #F2ADF3 !important; color: #2A0624 !important; }
       
-      .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: 0.2s !important; width: 100% !important; display: flex !important; justify-content: center !important; letter-spacing: 0.5px !important;}
-      .dx-primary-btn:hover { background: #620856 !important; color: #F2ADF3 !important; }
-      .dx-primary-btn:disabled { opacity: 0.5 !important; cursor: not-allowed !important; filter: grayscale(100%) !important; }
+      #dx-color-importer-wrapper .dx-radio-group { display: flex !important; background: #222 !important; border: 1px solid #555 !important; border-radius: 4px !important; overflow: hidden !important; font-size: 11px !important; }
+      #dx-color-importer-wrapper .dx-radio-label { margin: 0 !important; cursor: pointer !important; display: block !important; }
+      #dx-color-importer-wrapper .dx-radio-label input { display: none !important; }
+      #dx-color-importer-wrapper .dx-radio-label span { display: block !important; padding: 6px 12px !important; color: #aaa !important; transition: 0.2s !important; font-weight: 500 !important; background: transparent !important; border: none !important; }
+      #dx-color-importer-wrapper .dx-radio-label input:checked + span { background: #F2ADF3 !important; color: #2A0624 !important; font-weight: bold !important; }
+      #dx-color-importer-wrapper .dx-radio-label:hover span { background: #333 !important; }
+      
+      #dx-color-importer-wrapper .dx-color-swatch { width: 100% !important; aspect-ratio: 1 !important; border: 1px solid #444 !important; border-radius: 4px !important; cursor: pointer !important; position: relative !important; box-shadow: 0 2px 4px rgba(0,0,0,0.4) !important; transition: transform 0.1s !important; }
+      #dx-color-importer-wrapper .dx-color-swatch:hover { transform: scale(1.15) !important; z-index: 2 !important; border-color: #F2ADF3 !important; }
+      
+      #dx-color-importer-wrapper .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border: none !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: all 0.2s !important; width: 100% !important; display: flex !important; justify-content: center !important; align-items: center !important; letter-spacing: 0.5px !important; }
+      #dx-color-importer-wrapper .dx-primary-btn:hover:not(:disabled) { background: #620856 !important; color: #F2ADF3 !important; }
+      #dx-color-importer-wrapper .dx-primary-btn:active:not(:disabled) { transform: scale(0.98) !important; }
+      #dx-color-importer-wrapper .dx-primary-btn:disabled { background: #333 !important; color: #666 !important; border: 1px solid #444 !important; cursor: not-allowed !important; filter: none !important; opacity: 1 !important; }
     `;
     document.head.appendChild(styles);
 
@@ -92,8 +100,8 @@ class ElementorDXColorImporter {
             <button id="dx-btn-backup" class="dx-icon-btn" title="Backup"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
           </div>
           <div style="display:flex !important; gap:4px !important; font-size:10px !important;">
-            <button id="dx-tab-ui" style="background:#F2ADF3 !important; color:#2A0624 !important; padding:6px 10px !important; cursor:pointer !important; border-radius:3px !important; font-weight:bold !important;">UI</button>
-            <button id="dx-tab-raw" style="background:#222 !important; color:#aaa !important; padding:6px 10px !important; cursor:pointer !important; border-radius:3px !important; font-weight:bold !important;">RAW</button>
+            <button id="dx-tab-ui" class="dx-tab-btn is-active">UI</button>
+            <button id="dx-tab-raw" class="dx-tab-btn">RAW</button>
           </div>
         </div>
         <div id="dx-workspace" style="margin-bottom:12px !important;">
@@ -109,7 +117,7 @@ class ElementorDXColorImporter {
             </div>
           </div>
           <div id="dx-view-raw" style="display:none !important;">
-            <textarea id="dx-color-json-input" rows="10" style="width:100% !important; background:#1e1e1e !important; color:#d4d4d4 !important; border:1px solid #444 !important; border-radius:4px !important; padding:8px !important; font-family:monospace !important; font-size:10px !important; resize:vertical !important; box-sizing: border-box !important; outline:none !important;"></textarea>
+            <textarea id="dx-color-json-input" rows="10" style="width:100% !important; background:#1e1e1e !important; color:#d4d4d4 !important; border:1px solid #444 !important; border-radius:4px !important; padding:8px !important; font-family:monospace !important; font-size:10px !important; resize:vertical !important; box-sizing: border-box !important; outline:none !important; margin:0 !important;"></textarea>
           </div>
         </div>
         <button id="dx-btn-update" class="dx-primary-btn">Apply Colors</button>
@@ -225,10 +233,8 @@ class ElementorDXColorImporter {
       this.currentView = "ui";
       viewUi.style.setProperty("display", "block", "important");
       viewRaw.style.setProperty("display", "none", "important");
-      tabUi.style.setProperty("background", "#F2ADF3", "important");
-      tabUi.style.setProperty("color", "#2A0624", "important");
-      tabRaw.style.setProperty("background", "#222", "important");
-      tabRaw.style.setProperty("color", "#aaa", "important");
+      tabUi.className = "dx-tab-btn is-active";
+      tabRaw.className = "dx-tab-btn";
       const colors = this.parseColors();
       if (colors) {
         this.processColorsArray(colors);
@@ -242,10 +248,8 @@ class ElementorDXColorImporter {
       this.currentView = "raw";
       viewUi.style.setProperty("display", "none", "important");
       viewRaw.style.setProperty("display", "block", "important");
-      tabRaw.style.setProperty("background", "#F2ADF3", "important");
-      tabRaw.style.setProperty("color", "#2A0624", "important");
-      tabUi.style.setProperty("background", "#222", "important");
-      tabUi.style.setProperty("color", "#aaa", "important");
+      tabRaw.className = "dx-tab-btn is-active";
+      tabUi.className = "dx-tab-btn";
     };
 
     document.getElementById("dx-btn-update").onclick = (e) => {
