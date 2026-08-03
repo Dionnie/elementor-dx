@@ -74,7 +74,7 @@ class ElementorDXClassFinder {
 
     wrapper.innerHTML = `
       <div id="dx-classfinder-drag-handle" style="cursor: grab; background: #1e1e1e; padding: 10px 12px; border-radius: 6px 6px 0 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center;">
-        <h4 style="margin:0; color:#fff; font-size:11px; text-transform:uppercase; font-weight:bold; letter-spacing:0.5px; pointer-events: none;">🔍 Class Finder</h4>
+        <h4 style="margin:0; color:#fff; font-size:11px; text-transform:uppercase; font-weight:bold; letter-spacing:0.5px; pointer-events: none;">Class Finder</h4>
         <div style="display:flex; gap:4px; align-items:center;">
           <button id="dx-classfinder-btn-minimize" class="dx-cf-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
           <button id="dx-classfinder-btn-close" class="dx-cf-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
