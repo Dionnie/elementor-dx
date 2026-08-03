@@ -5,6 +5,8 @@ class ElementorDXClassFinder {
     this.isOpen = localStorage.getItem("dx_classfinder_open") === "true";
     this.styleId = "dx-classfinder-styles";
     this.scanTimer = null;
+    this.host = null;
+    this.shadow = null;
 
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => {
@@ -24,20 +26,22 @@ class ElementorDXClassFinder {
   open() {
     this.isOpen = true;
     localStorage.setItem("dx_classfinder_open", "true");
-    const wrapper = document.getElementById("dx-classfinder-wrapper");
-    if (!wrapper) {
+    if (!this.host) {
       this.injectFloatingUI();
       this.bindEvents();
     } else {
-      wrapper.style.setProperty("display", "flex", "important");
+      this.shadow.getElementById("dx-classfinder-wrapper").style.display =
+        "flex";
     }
   }
 
   close() {
     this.isOpen = false;
     localStorage.setItem("dx_classfinder_open", "false");
-    const wrapper = document.getElementById("dx-classfinder-wrapper");
-    if (wrapper) wrapper.style.setProperty("display", "none", "important");
+    if (this.shadow) {
+      this.shadow.getElementById("dx-classfinder-wrapper").style.display =
+        "none";
+    }
     this.disable();
   }
 
@@ -48,65 +52,86 @@ class ElementorDXClassFinder {
   }
 
   injectFloatingUI() {
-    if (document.getElementById("dx-classfinder-wrapper")) return;
+    if (document.getElementById("dx-classfinder-host")) return;
+
+    this.host = document.createElement("div");
+    this.host.id = "dx-classfinder-host";
+    this.host.style.cssText =
+      "position: fixed; z-index: 999999; top: 0; left: 0; width: 0; height: 0; overflow: visible;";
+    document.body.appendChild(this.host);
+    this.shadow = this.host.attachShadow({ mode: "open" });
 
     const styles = document.createElement("style");
-    styles.id = "dx-classfinder-ui-styles";
     styles.innerHTML = `
       /* Theme Immunity Reset */
-      #dx-classfinder-wrapper, #dx-classfinder-wrapper * { box-sizing: border-box !important; font-family: sans-serif !important; letter-spacing: normal !important; line-height: 1.5 !important; }
-      #dx-classfinder-wrapper button, #dx-classfinder-wrapper input { appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; outline: none !important; text-transform: none !important; }
-      #dx-classfinder-wrapper button::before, #dx-classfinder-wrapper button::after { display: none !important; }
+      :host { all: initial; font-family: sans-serif; }
+      * { box-sizing: border-box; }
+      button, input { 
+        appearance: none; -webkit-appearance: none; background: transparent; 
+        border: none; border-radius: 0; padding: 0; margin: 0; 
+        box-shadow: none; outline: none; text-transform: none; font-family: inherit;
+      }
 
-      /* Specific UI Styles */
-      #dx-classfinder-wrapper .dx-cf-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; background: transparent !important; border: none !important; }
-      #dx-classfinder-wrapper .dx-cf-min-btn:hover { background: #333 !important; color: #fff !important; }
+      .dx-wrapper {
+        position: fixed; top: 100px; left: 40px; width: 340px; background: #2b2b2b; color: #fff;
+        border: 1px solid #444; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        display: flex; flex-direction: column;
+      }
+
+      .dx-header {
+        cursor: grab; background: #1e1e1e; padding: 10px 12px; border-radius: 6px 6px 0 0; 
+        border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center;
+      }
+      .dx-header h4 { margin: 0; color: #fff; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; pointer-events: none; }
+
+      .dx-body { padding: 12px; }
+
+      .dx-cf-min-btn { cursor: pointer; color: #aaa; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-right: -4px; }
+      .dx-cf-min-btn:hover { background: #333; color: #fff; }
       
-      #dx-classfinder-wrapper .dx-cf-input { width: 100% !important; background: #1e1e1e !important; color: #ddd !important; border: 1px solid #444 !important; border-radius: 4px !important; padding: 10px 12px !important; font-size: 11px !important; font-family: monospace !important; transition: border-color 0.2s !important; margin: 0 !important; }
-      #dx-classfinder-wrapper .dx-cf-input:focus { border-color: #F2ADF3 !important; outline: none !important; }
+      .dx-cf-input { width: 100%; background: #1e1e1e; color: #ddd; border: 1px solid #444; border-radius: 4px; padding: 10px 12px; font-size: 11px; font-family: monospace; transition: border-color 0.2s; }
+      .dx-cf-input:focus { border-color: #F2ADF3; }
       
-      #dx-classfinder-wrapper .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border: none !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: all 0.2s !important; width: 100% !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 6px !important; letter-spacing: 0.5px !important; }
-      #dx-classfinder-wrapper .dx-primary-btn:hover { background: #620856 !important; color: #F2ADF3 !important; }
-      #dx-classfinder-wrapper .dx-primary-btn:active { transform: scale(0.98) !important; }
+      .dx-primary-btn { background: #F2ADF3; color: #2A0624; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.2s; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; letter-spacing: 0.5px; }
+      .dx-primary-btn:hover { background: #620856; color: #F2ADF3; }
+      .dx-primary-btn:active { transform: scale(0.98); }
+
+      svg { display: block; }
     `;
-    document.head.appendChild(styles);
+    this.shadow.appendChild(styles);
 
     const wrapper = document.createElement("div");
     wrapper.id = "dx-classfinder-wrapper";
-    wrapper.style.cssText = `
-      position: fixed !important; top: 100px !important; left: 40px !important; width: 340px !important; background: #2b2b2b !important;
-      border: 1px solid #444 !important; border-radius: 6px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-      z-index: 999999 !important; font-family: sans-serif !important; display: flex !important; flex-direction: column !important;
-    `;
+    wrapper.className = "dx-wrapper";
 
     wrapper.innerHTML = `
-      <div id="dx-classfinder-drag-handle" style="cursor: grab !important; background: #1e1e1e !important; padding: 10px 12px !important; border-radius: 6px 6px 0 0 !important; border-bottom: 1px solid #444 !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
-        <h4 style="margin:0 !important; color:#fff !important; font-size:11px !important; text-transform:uppercase !important; font-weight:bold !important; letter-spacing:0.5px !important; pointer-events: none !important;">Class Finder</h4>
-        <div style="display:flex !important; gap:4px !important; align-items:center !important;">
+      <div id="dx-classfinder-drag-handle" class="dx-header">
+        <h4>Class Finder</h4>
+        <div style="display:flex; gap:4px; align-items:center;">
           <button id="dx-classfinder-btn-minimize" class="dx-cf-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
           <button id="dx-classfinder-btn-close" class="dx-cf-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
         </div>
       </div>
-      <div id="dx-classfinder-body" style="padding: 12px !important;">
-        <div style="background:#1e1e1e !important; padding:10px !important; border:1px solid #444 !important; border-radius:4px !important; margin-bottom:12px !important;">
-          <div style="color:#aaa !important; font-size: 10px !important; margin-bottom:8px !important; font-weight: bold !important; text-transform: uppercase !important;">Target Class Prefix:</div>
+      <div id="dx-classfinder-body" class="dx-body">
+        <div style="background:#1e1e1e; padding:10px; border:1px solid #444; border-radius:4px; margin-bottom:12px;">
+          <div style="color:#aaa; font-size: 10px; margin-bottom:8px; font-weight: bold; text-transform: uppercase;">Target Class Prefix:</div>
           <input type="text" id="dx-classfinder-input" class="dx-cf-input" placeholder="e.g. acme- or .hero-btn" value="${this.savedPrefix}">
         </div>
-        <button id="dx-classfinder-btn-toggle" class="dx-primary-btn" style="${this.isActive ? "background:#620856 !important; color:#F2ADF3 !important;" : ""}">
+        <button id="dx-classfinder-btn-toggle" class="dx-primary-btn" style="${this.isActive ? "background:#620856; color:#F2ADF3;" : ""}">
           ${
             this.isActive
               ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Disable Class Finder`
               : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path></svg> Enable Class Finder`
           }
         </button>
-        <div id="dx-classfinder-status" style="margin-top:8px !important; font-size:10px !important; font-weight:bold !important; color:#F2ADF3 !important; text-align:center !important; height:12px !important;"></div>
+        <div id="dx-classfinder-status" style="margin-top:8px; font-size:10px; font-weight:bold; color:#F2ADF3; text-align:center; height:12px;"></div>
       </div>
     `;
 
-    document.body.appendChild(wrapper);
+    this.shadow.appendChild(wrapper);
     this.makeDraggable(
       wrapper,
-      document.getElementById("dx-classfinder-drag-handle"),
+      this.shadow.getElementById("dx-classfinder-drag-handle"),
     );
   }
 
@@ -119,7 +144,7 @@ class ElementorDXClassFinder {
       e.preventDefault();
       pos3 = e.clientX;
       pos4 = e.clientY;
-      handle.style.setProperty("cursor", "grabbing", "important");
+      handle.style.cursor = "grabbing";
       document.onmouseup = closeDragElement;
       document.onmousemove = elementDrag;
     };
@@ -129,31 +154,25 @@ class ElementorDXClassFinder {
       pos2 = pos4 - e.clientY;
       pos3 = e.clientX;
       pos4 = e.clientY;
-      element.style.setProperty(
-        "top",
-        element.offsetTop - pos2 + "px",
-        "important",
-      );
-      element.style.setProperty(
-        "left",
-        element.offsetLeft - pos1 + "px",
-        "important",
-      );
-      element.style.setProperty("right", "auto", "important");
+      element.style.top = element.offsetTop - pos2 + "px";
+      element.style.left = element.offsetLeft - pos1 + "px";
+      element.style.right = "auto";
     };
     const closeDragElement = () => {
       document.onmouseup = null;
       document.onmousemove = null;
-      handle.style.setProperty("cursor", "grab", "important");
+      handle.style.cursor = "grab";
     };
   }
 
   bindEvents() {
-    const btnMinimize = document.getElementById("dx-classfinder-btn-minimize");
-    const btnClose = document.getElementById("dx-classfinder-btn-close");
-    const bodyContent = document.getElementById("dx-classfinder-body");
-    const btnToggle = document.getElementById("dx-classfinder-btn-toggle");
-    const input = document.getElementById("dx-classfinder-input");
+    const btnMinimize = this.shadow.getElementById(
+      "dx-classfinder-btn-minimize",
+    );
+    const btnClose = this.shadow.getElementById("dx-classfinder-btn-close");
+    const bodyContent = this.shadow.getElementById("dx-classfinder-body");
+    const btnToggle = this.shadow.getElementById("dx-classfinder-btn-toggle");
+    const input = this.shadow.getElementById("dx-classfinder-input");
 
     btnClose.onclick = (e) => {
       e.preventDefault();
@@ -161,11 +180,11 @@ class ElementorDXClassFinder {
     };
     btnMinimize.onclick = (e) => {
       e.preventDefault();
-      bodyContent.style.setProperty(
-        "display",
-        bodyContent.style.display === "none" ? "block" : "none",
-        "important",
-      );
+      const isHidden = bodyContent.style.display === "none";
+      bodyContent.style.display = isHidden ? "block" : "none";
+      btnMinimize.innerHTML = isHidden
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>';
     };
 
     btnToggle.onclick = (e) => {
@@ -176,13 +195,13 @@ class ElementorDXClassFinder {
         this.isActive ? "true" : "false",
       );
       if (this.isActive) {
-        btnToggle.style.setProperty("background", "#620856", "important");
-        btnToggle.style.setProperty("color", "#F2ADF3", "important");
+        btnToggle.style.background = "#620856";
+        btnToggle.style.color = "#F2ADF3";
         btnToggle.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Disable Class Finder`;
         this.scanAndHighlight();
       } else {
-        btnToggle.style.setProperty("background", "#F2ADF3", "important");
-        btnToggle.style.setProperty("color", "#2A0624", "important");
+        btnToggle.style.background = "#F2ADF3";
+        btnToggle.style.color = "#2A0624";
         btnToggle.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path></svg> Enable Class Finder`;
         this.disable();
       }
@@ -200,8 +219,8 @@ class ElementorDXClassFinder {
   scanAndHighlight() {
     const doc = this.getTargetDocument();
     let rawInput = "";
-    if (document.getElementById("dx-classfinder-input")) {
-      rawInput = document
+    if (this.shadow.getElementById("dx-classfinder-input")) {
+      rawInput = this.shadow
         .getElementById("dx-classfinder-input")
         .value.trim()
         .toLowerCase();
@@ -265,13 +284,9 @@ class ElementorDXClassFinder {
   }
 
   showStatus(msg, type) {
-    const el = document.getElementById("dx-classfinder-status");
+    const el = this.shadow.getElementById("dx-classfinder-status");
     if (!el) return;
-    el.style.setProperty(
-      "color",
-      type === "error" ? "#e74c3c" : "#F2ADF3",
-      "important",
-    );
+    el.style.color = type === "error" ? "#e74c3c" : "#F2ADF3";
     el.innerText = msg;
   }
 }
