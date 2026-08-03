@@ -25,7 +25,7 @@ class ElementorDXTypographyImporter {
       this.injectFloatingUI();
       this.fetchInitialData();
     } else {
-      wrapper.style.display = "flex";
+      wrapper.style.setProperty("display", "flex", "important");
     }
   }
 
@@ -33,7 +33,7 @@ class ElementorDXTypographyImporter {
     this.isOpen = false;
     localStorage.setItem("dx_typo_importer_open", "false");
     const wrapper = document.getElementById("dx-typo-importer-wrapper");
-    if (wrapper) wrapper.style.display = "none";
+    if (wrapper) wrapper.style.setProperty("display", "none", "important");
   }
 
   injectFloatingUI() {
@@ -42,65 +42,70 @@ class ElementorDXTypographyImporter {
     const styles = document.createElement("style");
     styles.id = "dx-typo-styles";
     styles.innerHTML = `
-      .dx-typo-icon-btn { background: transparent; border: 1px solid #444; color: #aaa; padding: 6px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-      .dx-typo-icon-btn:hover { background: #2A0624; color: #F2ADF3; border-color: #620856; }
-      .dx-typo-min-btn { background: transparent; border: none; color: #aaa; padding: 6px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-right: -4px; }
-      .dx-typo-min-btn:hover { background: #333; color: #fff; }
+      /* Theme Immunity Reset */
+      #dx-typo-importer-wrapper, #dx-typo-importer-wrapper * { box-sizing: border-box !important; font-family: sans-serif !important; letter-spacing: normal !important; line-height: 1.5 !important; }
+      #dx-typo-importer-wrapper button, #dx-typo-importer-wrapper input, #dx-typo-importer-wrapper textarea { appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; outline: none !important; text-transform: none !important; }
+      #dx-typo-importer-wrapper button::before, #dx-typo-importer-wrapper button::after { display: none !important; }
+
+      .dx-typo-icon-btn { cursor: pointer !important; border: 1px solid #444 !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; }
+      .dx-typo-icon-btn:hover { background: #2A0624 !important; color: #F2ADF3 !important; border-color: #620856 !important; }
+      .dx-typo-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; }
+      .dx-typo-min-btn:hover { background: #333 !important; color: #fff !important; }
       
-      .dx-typo-pill { padding: 8px 12px; background: #222; border: 1px solid #444; border-radius: 20px; font-size: 11px; color: #ddd; cursor: pointer; transition: all 0.2s; user-select: none; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-      .dx-typo-pill:hover { background: #2A0624; border-color: #F2ADF3; color: #F2ADF3; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+      .dx-typo-pill { padding: 8px 12px !important; background: #222 !important; border: 1px solid #444 !important; border-radius: 20px !important; font-size: 11px !important; color: #ddd !important; cursor: pointer !important; transition: all 0.2s !important; user-select: none !important; white-space: nowrap !important; box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important; }
+      .dx-typo-pill:hover { background: #2A0624 !important; border-color: #F2ADF3 !important; color: #F2ADF3 !important; transform: translateY(-1px) !important; box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important; }
       
-      .dx-primary-btn { background: #F2ADF3; color: #2A0624; border: none; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; width: 100%; display: flex; justify-content: center; letter-spacing: 0.5px;}
-      .dx-primary-btn:hover { background: #620856; color: #F2ADF3; }
-      .dx-primary-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
+      .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: 0.2s !important; width: 100% !important; display: flex !important; justify-content: center !important; letter-spacing: 0.5px !important;}
+      .dx-primary-btn:hover { background: #620856 !important; color: #F2ADF3 !important; }
+      .dx-primary-btn:disabled { opacity: 0.5 !important; cursor: not-allowed !important; filter: grayscale(100%) !important; }
     `;
     document.head.appendChild(styles);
 
     const wrapper = document.createElement("div");
     wrapper.id = "dx-typo-importer-wrapper";
     wrapper.style.cssText = `
-      position: fixed; top: 80px; left: 40px; width: 360px; background: #2b2b2b;
-      border: 1px solid #444; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      z-index: 99998; font-family: sans-serif; display: flex; flex-direction: column;
+      position: fixed !important; top: 80px !important; left: 40px !important; width: 360px !important; background: #2b2b2b !important;
+      border: 1px solid #444 !important; border-radius: 6px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+      z-index: 99998 !important; font-family: sans-serif !important; display: flex !important; flex-direction: column !important;
     `;
 
     wrapper.innerHTML = `
-      <div id="dx-typo-drag-handle" style="cursor: grab; background: #1e1e1e; padding: 10px 12px; border-radius: 6px 6px 0 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center;">
-        <h4 style="margin:0; color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; pointer-events: none;">Custom Typography</h4>
-        <div style="display:flex; gap:4px; align-items:center;">
+      <div id="dx-typo-drag-handle" style="cursor: grab !important; background: #1e1e1e !important; padding: 10px 12px !important; border-radius: 6px 6px 0 0 !important; border-bottom: 1px solid #444 !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
+        <h4 style="margin:0 !important; color:#fff !important; font-size:11px !important; text-transform:uppercase !important; letter-spacing:0.5px !important; pointer-events: none !important;">Custom Typography</h4>
+        <div style="display:flex !important; gap:4px !important; align-items:center !important;">
           <button id="dx-typo-btn-minimize" class="dx-typo-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
           <button id="dx-typo-btn-close" class="dx-typo-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
         </div>
       </div>
-      <div id="dx-typo-body" style="padding: 12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div style="display:flex; gap:6px;">
+      <div id="dx-typo-body" style="padding: 12px !important;">
+        <div style="display:flex !important; justify-content:space-between !important; align-items:center !important; margin-bottom:12px !important;">
+          <div style="display:flex !important; gap:6px !important;">
             <button id="dx-typo-btn-prompt" class="dx-typo-icon-btn" title="Copy AI Prompt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></button>
             <button id="dx-typo-btn-refresh" class="dx-typo-icon-btn" title="Refresh"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
             <button id="dx-typo-btn-clear" class="dx-typo-icon-btn" title="Clear"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
             <button id="dx-typo-btn-backup" class="dx-typo-icon-btn" title="Backup"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
           </div>
-          <div style="display:flex; gap:4px; font-size:10px;">
-            <button id="dx-typo-tab-ui" style="background:#F2ADF3; border:none; color:#2A0624; padding:6px 10px; border-radius:3px; font-weight:bold; cursor:pointer;">UI</button>
-            <button id="dx-typo-tab-raw" style="background:#222; border:none; color:#aaa; padding:6px 10px; border-radius:3px; font-weight:bold; cursor:pointer;">RAW</button>
+          <div style="display:flex !important; gap:4px !important; font-size:10px !important;">
+            <button id="dx-typo-tab-ui" style="background:#F2ADF3 !important; color:#2A0624 !important; padding:6px 10px !important; border-radius:3px !important; font-weight:bold !important; cursor:pointer !important;">UI</button>
+            <button id="dx-typo-tab-raw" style="background:#222 !important; color:#aaa !important; padding:6px 10px !important; border-radius:3px !important; font-weight:bold !important; cursor:pointer !important;">RAW</button>
           </div>
         </div>
-        <div id="dx-typo-workspace" style="margin-bottom:12px;">
-          <div id="dx-typo-view-ui" style="display:block;">
-            <div style="display:flex; align-items:center; justify-content:center; background:#1e1e1e; padding:8px; border:1px solid #444; border-radius:4px; margin-bottom:12px;">
-              <div style="color:#aaa; font-size: 11px; display:flex; align-items:center; gap: 6px;">
+        <div id="dx-typo-workspace" style="margin-bottom:12px !important;">
+          <div id="dx-typo-view-ui" style="display:block !important;">
+            <div style="display:flex !important; align-items:center !important; justify-content:center !important; background:#1e1e1e !important; padding:8px !important; border:1px solid #444 !important; border-radius:4px !important; margin-bottom:12px !important;">
+              <div style="color:#aaa !important; font-size: 11px !important; display:flex !important; align-items:center !important; gap: 6px !important;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 <span>Click a style below to copy its CSS variables</span>
               </div>
             </div>
-            <div id="dx-typo-grid" style="display:flex; flex-wrap:wrap; gap:8px; max-height:220px; overflow-y:auto; padding: 4px 2px;"></div>
+            <div id="dx-typo-grid" style="display:flex !important; flex-wrap:wrap !important; gap:8px !important; max-height:220px !important; overflow-y:auto !important; padding: 4px 2px !important;"></div>
           </div>
-          <div id="dx-typo-view-raw" style="display:none;">
-            <textarea id="dx-typo-json-input" rows="10" style="width:100%; background:#1e1e1e; color:#d4d4d4; border:1px solid #444; border-radius:4px; padding:8px; font-family:monospace; font-size:10px; resize:vertical; box-sizing: border-box; outline:none;"></textarea>
+          <div id="dx-typo-view-raw" style="display:none !important;">
+            <textarea id="dx-typo-json-input" rows="10" style="width:100% !important; background:#1e1e1e !important; color:#d4d4d4 !important; border:1px solid #444 !important; border-radius:4px !important; padding:8px !important; font-family:monospace !important; font-size:10px !important; resize:vertical !important; box-sizing: border-box !important; outline:none !important;"></textarea>
           </div>
         </div>
         <button id="dx-typo-btn-update" class="dx-primary-btn">Apply Typography</button>
-        <div id="dx-typo-status" style="margin-top:8px; font-size:10px; color:#F2ADF3; display:none; text-align:center;"></div>
+        <div id="dx-typo-status" style="margin-top:8px !important; font-size:10px !important; color:#F2ADF3 !important; display:none !important; text-align:center !important;"></div>
       </div>
     `;
 
@@ -125,7 +130,7 @@ class ElementorDXTypographyImporter {
       e.preventDefault();
       pos3 = e.clientX;
       pos4 = e.clientY;
-      handle.style.cursor = "grabbing";
+      handle.style.setProperty("cursor", "grabbing", "important");
       document.onmouseup = closeDragElement;
       document.onmousemove = elementDrag;
     };
@@ -135,14 +140,22 @@ class ElementorDXTypographyImporter {
       pos2 = pos4 - e.clientY;
       pos3 = e.clientX;
       pos4 = e.clientY;
-      element.style.top = element.offsetTop - pos2 + "px";
-      element.style.left = element.offsetLeft - pos1 + "px";
-      element.style.right = "auto";
+      element.style.setProperty(
+        "top",
+        element.offsetTop - pos2 + "px",
+        "important",
+      );
+      element.style.setProperty(
+        "left",
+        element.offsetLeft - pos1 + "px",
+        "important",
+      );
+      element.style.setProperty("right", "auto", "important");
     };
     const closeDragElement = () => {
       document.onmouseup = null;
       document.onmousemove = null;
-      handle.style.cursor = "grab";
+      handle.style.setProperty("cursor", "grab", "important");
     };
   }
 
@@ -159,7 +172,11 @@ class ElementorDXTypographyImporter {
     document.getElementById("dx-typo-btn-minimize").onclick = (e) => {
       e.preventDefault();
       const body = document.getElementById("dx-typo-body");
-      body.style.display = body.style.display === "none" ? "block" : "none";
+      body.style.setProperty(
+        "display",
+        body.style.display === "none" ? "block" : "none",
+        "important",
+      );
     };
 
     document.getElementById("dx-typo-btn-prompt").onclick = (e) => {
@@ -199,12 +216,12 @@ class ElementorDXTypographyImporter {
     tabUi.onclick = (e) => {
       e.preventDefault();
       this.currentView = "ui";
-      viewUi.style.display = "block";
-      viewRaw.style.display = "none";
-      tabUi.style.background = "#F2ADF3";
-      tabUi.style.color = "#2A0624";
-      tabRaw.style.background = "#222";
-      tabRaw.style.color = "#aaa";
+      viewUi.style.setProperty("display", "block", "important");
+      viewRaw.style.setProperty("display", "none", "important");
+      tabUi.style.setProperty("background", "#F2ADF3", "important");
+      tabUi.style.setProperty("color", "#2A0624", "important");
+      tabRaw.style.setProperty("background", "#222", "important");
+      tabRaw.style.setProperty("color", "#aaa", "important");
       const typo = this.parseTypography();
       if (typo) {
         this.processTypographyArray(typo);
@@ -216,12 +233,12 @@ class ElementorDXTypographyImporter {
     tabRaw.onclick = (e) => {
       e.preventDefault();
       this.currentView = "raw";
-      viewUi.style.display = "none";
-      viewRaw.style.display = "block";
-      tabRaw.style.background = "#F2ADF3";
-      tabRaw.style.color = "#2A0624";
-      tabUi.style.background = "#222";
-      tabUi.style.color = "#aaa";
+      viewUi.style.setProperty("display", "none", "important");
+      viewRaw.style.setProperty("display", "block", "important");
+      tabRaw.style.setProperty("background", "#F2ADF3", "important");
+      tabRaw.style.setProperty("color", "#2A0624", "important");
+      tabUi.style.setProperty("background", "#222", "important");
+      tabUi.style.setProperty("color", "#aaa", "important");
     };
 
     document.getElementById("dx-typo-btn-update").onclick = (e) => {
@@ -437,7 +454,7 @@ class ElementorDXTypographyImporter {
     const typography = this.parseTypography();
     if (!Array.isArray(typography) || typography.length === 0) {
       grid.innerHTML =
-        '<div style="color:#777; font-size:11px; width: 100%;">No typography found.</div>';
+        '<div style="color:#777 !important; font-size:11px !important; width: 100% !important;">No typography found.</div>';
       return;
     }
     typography.forEach((t) => {
@@ -500,12 +517,16 @@ class ElementorDXTypographyImporter {
 
   showStatus(msg, type) {
     const el = document.getElementById("dx-typo-status");
-    el.style.display = "block";
-    el.style.color = type === "error" ? "#e74c3c" : "#F2ADF3";
+    el.style.setProperty("display", "block", "important");
+    el.style.setProperty(
+      "color",
+      type === "error" ? "#e74c3c" : "#F2ADF3",
+      "important",
+    );
     el.innerText = msg;
     clearTimeout(this.statusTimer);
     this.statusTimer = setTimeout(() => {
-      el.style.display = "none";
+      el.style.setProperty("display", "none", "important");
     }, 3500);
   }
 }

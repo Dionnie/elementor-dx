@@ -34,16 +34,18 @@ class ElementorDXGridOverlay {
   showGrid() {
     const doc = this.getTargetDocument();
     if (doc.getElementById(this.gridId)) {
-      doc.getElementById(this.gridId).style.display = "block";
+      doc
+        .getElementById(this.gridId)
+        .style.setProperty("display", "block", "important");
       return;
     }
 
     const grid = doc.createElement("div");
     grid.id = this.gridId;
     grid.style.cssText = `
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99901; 
-      background-image: linear-gradient(rgba(242, 173, 243, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(242, 173, 243, 0.1) 1px, transparent 1px), linear-gradient(rgba(242, 173, 243, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(242, 173, 243, 0.3) 1px, transparent 1px);
-      background-size: 8px 8px, 8px 8px, 64px 64px, 64px 64px; background-position: center top;
+      position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; pointer-events: none !important; z-index: 99901 !important; 
+      background-image: linear-gradient(rgba(242, 173, 243, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(242, 173, 243, 0.1) 1px, transparent 1px), linear-gradient(rgba(242, 173, 243, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(242, 173, 243, 0.3) 1px, transparent 1px) !important;
+      background-size: 8px 8px, 8px 8px, 64px 64px, 64px 64px !important; background-position: center top !important;
     `;
     doc.body.appendChild(grid);
   }
@@ -51,6 +53,8 @@ class ElementorDXGridOverlay {
   hideGrid() {
     const doc = this.getTargetDocument();
     if (doc.getElementById(this.gridId))
-      doc.getElementById(this.gridId).style.display = "none";
+      doc
+        .getElementById(this.gridId)
+        .style.setProperty("display", "none", "important");
   }
 }

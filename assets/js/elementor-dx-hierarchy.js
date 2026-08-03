@@ -37,19 +37,23 @@ class ElementorDXHierarchyLens {
   enable() {
     const doc = this.getTargetDocument();
     if (doc.getElementById(this.lensId)) {
-      doc.getElementById(this.lensId).style.display = "block";
+      doc
+        .getElementById(this.lensId)
+        .style.setProperty("display", "block", "important");
       return;
     }
 
     const lens = doc.createElement("div");
     lens.id = this.lensId;
-    lens.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99900; backdrop-filter: grayscale(100%) contrast(115%); -webkit-backdrop-filter: grayscale(100%) contrast(115%);`;
+    lens.style.cssText = `position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; pointer-events: none !important; z-index: 99900 !important; backdrop-filter: grayscale(100%) contrast(115%) !important; -webkit-backdrop-filter: grayscale(100%) contrast(115%) !important;`;
     doc.body.appendChild(lens);
   }
 
   disable() {
     const doc = this.getTargetDocument();
     if (doc.getElementById(this.lensId))
-      doc.getElementById(this.lensId).style.display = "none";
+      doc
+        .getElementById(this.lensId)
+        .style.setProperty("display", "none", "important");
   }
 }

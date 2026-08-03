@@ -24,7 +24,7 @@ class ElementorDXColorImporter {
       this.injectFloatingUI();
       this.fetchInitialData();
     } else {
-      wrapper.style.display = "flex";
+      wrapper.style.setProperty("display", "flex", "important");
     }
   }
 
@@ -32,7 +32,7 @@ class ElementorDXColorImporter {
     this.isOpen = false;
     localStorage.setItem("dx_color_importer_open", "false");
     const wrapper = document.getElementById("dx-color-importer-wrapper");
-    if (wrapper) wrapper.style.display = "none";
+    if (wrapper) wrapper.style.setProperty("display", "none", "important");
   }
 
   injectFloatingUI() {
@@ -41,61 +41,66 @@ class ElementorDXColorImporter {
     const styles = document.createElement("style");
     styles.id = "dx-color-styles";
     styles.innerHTML = `
-      .dx-icon-btn { background: transparent; border: 1px solid #444; color: #aaa; padding: 6px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-      .dx-icon-btn:hover { background: #2A0624; color: #F2ADF3; border-color: #620856; }
-      .dx-min-btn { background: transparent; border: none; color: #aaa; padding: 6px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-right: -4px; }
-      .dx-min-btn:hover { background: #333; color: #fff; }
+      /* Theme Immunity Reset */
+      #dx-color-importer-wrapper, #dx-color-importer-wrapper * { box-sizing: border-box !important; font-family: sans-serif !important; letter-spacing: normal !important; line-height: 1.5 !important; }
+      #dx-color-importer-wrapper button, #dx-color-importer-wrapper input, #dx-color-importer-wrapper textarea { appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; outline: none !important; text-transform: none !important; }
+      #dx-color-importer-wrapper button::before, #dx-color-importer-wrapper button::after { display: none !important; }
+
+      .dx-icon-btn { cursor: pointer !important; border: 1px solid #444 !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; }
+      .dx-icon-btn:hover { background: #2A0624 !important; color: #F2ADF3 !important; border-color: #620856 !important; }
+      .dx-min-btn { cursor: pointer !important; color: #aaa !important; padding: 6px !important; border-radius: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s !important; margin-right: -4px !important; }
+      .dx-min-btn:hover { background: #333 !important; color: #fff !important; }
       
-      .dx-radio-group { display: flex; background: #222; border: 1px solid #555; border-radius: 4px; overflow: hidden; font-size: 11px; }
-      .dx-radio-label { margin: 0; cursor: pointer; }
-      .dx-radio-label input { display: none; }
-      .dx-radio-label span { display: block; padding: 6px 12px; color: #aaa; transition: 0.2s; font-weight: 500; }
-      .dx-radio-label input:checked + span { background: #F2ADF3; color: #2A0624; font-weight: bold; }
-      .dx-radio-label:hover span { background: #333; }
+      .dx-radio-group { display: flex !important; background: #222 !important; border: 1px solid #555 !important; border-radius: 4px !important; overflow: hidden !important; font-size: 11px !important; }
+      .dx-radio-label { margin: 0 !important; cursor: pointer !important; display: block !important; }
+      .dx-radio-label input { display: none !important; }
+      .dx-radio-label span { display: block !important; padding: 6px 12px !important; color: #aaa !important; transition: 0.2s !important; font-weight: 500 !important; }
+      .dx-radio-label input:checked + span { background: #F2ADF3 !important; color: #2A0624 !important; font-weight: bold !important; }
+      .dx-radio-label:hover span { background: #333 !important; }
       
-      .dx-color-swatch { width: 100%; aspect-ratio: 1; border: 1px solid #444; border-radius: 4px; cursor: pointer; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.4); transition: transform 0.1s; }
-      .dx-color-swatch:hover { transform: scale(1.15); z-index: 2; border-color: #F2ADF3; }
+      .dx-color-swatch { width: 100% !important; aspect-ratio: 1 !important; border: 1px solid #444 !important; border-radius: 4px !important; cursor: pointer !important; position: relative !important; box-shadow: 0 2px 4px rgba(0,0,0,0.4) !important; transition: transform 0.1s !important; }
+      .dx-color-swatch:hover { transform: scale(1.15) !important; z-index: 2 !important; border-color: #F2ADF3 !important; }
       
-      .dx-primary-btn { background: #F2ADF3; color: #2A0624; border: none; border-radius: 4px; padding: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; width: 100%; display: flex; justify-content: center; letter-spacing: 0.5px;}
-      .dx-primary-btn:hover { background: #620856; color: #F2ADF3; }
-      .dx-primary-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
+      .dx-primary-btn { background: #F2ADF3 !important; color: #2A0624 !important; border-radius: 4px !important; padding: 10px !important; font-size: 11px !important; font-weight: bold !important; text-transform: uppercase !important; cursor: pointer !important; transition: 0.2s !important; width: 100% !important; display: flex !important; justify-content: center !important; letter-spacing: 0.5px !important;}
+      .dx-primary-btn:hover { background: #620856 !important; color: #F2ADF3 !important; }
+      .dx-primary-btn:disabled { opacity: 0.5 !important; cursor: not-allowed !important; filter: grayscale(100%) !important; }
     `;
     document.head.appendChild(styles);
 
     const wrapper = document.createElement("div");
     wrapper.id = "dx-color-importer-wrapper";
     wrapper.style.cssText = `
-      position: fixed; top: 60px; right: 40px; width: 340px; background: #2b2b2b;
-      border: 1px solid #444; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      z-index: 99999; font-family: sans-serif; display: flex; flex-direction: column;
+      position: fixed !important; top: 60px !important; right: 40px !important; width: 340px !important; background: #2b2b2b !important;
+      border: 1px solid #444 !important; border-radius: 6px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+      z-index: 99999 !important; font-family: sans-serif !important; display: flex !important; flex-direction: column !important;
     `;
 
     wrapper.innerHTML = `
-      <div id="dx-drag-handle" style="cursor: grab; background: #1e1e1e; padding: 10px 12px; border-radius: 6px 6px 0 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center;">
-        <h4 style="margin:0; color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; pointer-events: none;">Custom Colors</h4>
-        <div style="display:flex; gap:4px; align-items:center;">
+      <div id="dx-drag-handle" style="cursor: grab !important; background: #1e1e1e !important; padding: 10px 12px !important; border-radius: 6px 6px 0 0 !important; border-bottom: 1px solid #444 !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
+        <h4 style="margin:0 !important; color:#fff !important; font-size:11px !important; text-transform:uppercase !important; letter-spacing:0.5px !important; pointer-events: none !important;">Custom Colors</h4>
+        <div style="display:flex !important; gap:4px !important; align-items:center !important;">
           <button id="dx-btn-minimize" class="dx-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
           <button id="dx-btn-close" class="dx-min-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
         </div>
       </div>
-      <div id="dx-color-body" style="padding: 12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div style="display:flex; gap:6px;">
+      <div id="dx-color-body" style="padding: 12px !important;">
+        <div style="display:flex !important; justify-content:space-between !important; align-items:center !important; margin-bottom:12px !important;">
+          <div style="display:flex !important; gap:6px !important;">
             <button id="dx-btn-prompt" class="dx-icon-btn" title="Copy AI Prompt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></button>
             <button id="dx-btn-refresh" class="dx-icon-btn" title="Refresh"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
             <button id="dx-btn-clear" class="dx-icon-btn" title="Clear"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
             <button id="dx-btn-backup" class="dx-icon-btn" title="Backup"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
           </div>
-          <div style="display:flex; gap:4px; font-size:10px;">
-            <button id="dx-tab-ui" style="background:#F2ADF3; border:none; color:#2A0624; padding:6px 10px; cursor:pointer; border-radius:3px; font-weight:bold;">UI</button>
-            <button id="dx-tab-raw" style="background:#222; border:none; color:#aaa; padding:6px 10px; cursor:pointer; border-radius:3px; font-weight:bold;">RAW</button>
+          <div style="display:flex !important; gap:4px !important; font-size:10px !important;">
+            <button id="dx-tab-ui" style="background:#F2ADF3 !important; color:#2A0624 !important; padding:6px 10px !important; cursor:pointer !important; border-radius:3px !important; font-weight:bold !important;">UI</button>
+            <button id="dx-tab-raw" style="background:#222 !important; color:#aaa !important; padding:6px 10px !important; cursor:pointer !important; border-radius:3px !important; font-weight:bold !important;">RAW</button>
           </div>
         </div>
-        <div id="dx-workspace" style="margin-bottom:12px;">
-          <div id="dx-view-ui" style="display:block;">
-            <div id="dx-color-grid" style="display:grid; grid-template-columns: repeat(11, 1fr); gap:4px; margin-bottom:12px; max-height:220px; overflow-y:auto; padding: 4px 2px;"></div>
-            <div style="display:flex; align-items:center; justify-content:space-between; background:#1e1e1e; padding:6px 8px; border:1px solid #444; border-radius:4px;">
-              <div style="color:#aaa; display:flex; align-items:center; justify-content:center; padding: 0 4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></div>
+        <div id="dx-workspace" style="margin-bottom:12px !important;">
+          <div id="dx-view-ui" style="display:block !important;">
+            <div id="dx-color-grid" style="display:grid !important; grid-template-columns: repeat(11, 1fr) !important; gap:4px !important; margin-bottom:12px !important; max-height:220px !important; overflow-y:auto !important; padding: 4px 2px !important;"></div>
+            <div style="display:flex !important; align-items:center !important; justify-content:space-between !important; background:#1e1e1e !important; padding:6px 8px !important; border:1px solid #444 !important; border-radius:4px !important;">
+              <div style="color:#aaa !important; display:flex !important; align-items:center !important; justify-content:center !important; padding: 0 4px !important;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></div>
               <div class="dx-radio-group">
                 <label class="dx-radio-label"><input type="radio" name="dx-copy" value="hex" checked><span>Hex</span></label>
                 <label class="dx-radio-label"><input type="radio" name="dx-copy" value="rgba"><span>RGBA</span></label>
@@ -103,12 +108,12 @@ class ElementorDXColorImporter {
               </div>
             </div>
           </div>
-          <div id="dx-view-raw" style="display:none;">
-            <textarea id="dx-color-json-input" rows="10" style="width:100%; background:#1e1e1e; color:#d4d4d4; border:1px solid #444; border-radius:4px; padding:8px; font-family:monospace; font-size:10px; resize:vertical; box-sizing: border-box; outline:none;"></textarea>
+          <div id="dx-view-raw" style="display:none !important;">
+            <textarea id="dx-color-json-input" rows="10" style="width:100% !important; background:#1e1e1e !important; color:#d4d4d4 !important; border:1px solid #444 !important; border-radius:4px !important; padding:8px !important; font-family:monospace !important; font-size:10px !important; resize:vertical !important; box-sizing: border-box !important; outline:none !important;"></textarea>
           </div>
         </div>
         <button id="dx-btn-update" class="dx-primary-btn">Apply Colors</button>
-        <div id="dx-color-status" style="margin-top:8px; font-size:10px; color:#F2ADF3; display:none; text-align:center;"></div>
+        <div id="dx-color-status" style="margin-top:8px !important; font-size:10px !important; color:#F2ADF3 !important; display:none !important; text-align:center !important;"></div>
       </div>
     `;
 
@@ -133,7 +138,7 @@ class ElementorDXColorImporter {
       e.preventDefault();
       pos3 = e.clientX;
       pos4 = e.clientY;
-      handle.style.cursor = "grabbing";
+      handle.style.setProperty("cursor", "grabbing", "important");
       document.onmouseup = closeDragElement;
       document.onmousemove = elementDrag;
     };
@@ -143,14 +148,22 @@ class ElementorDXColorImporter {
       pos2 = pos4 - e.clientY;
       pos3 = e.clientX;
       pos4 = e.clientY;
-      element.style.top = element.offsetTop - pos2 + "px";
-      element.style.left = element.offsetLeft - pos1 + "px";
-      element.style.right = "auto";
+      element.style.setProperty(
+        "top",
+        element.offsetTop - pos2 + "px",
+        "important",
+      );
+      element.style.setProperty(
+        "left",
+        element.offsetLeft - pos1 + "px",
+        "important",
+      );
+      element.style.setProperty("right", "auto", "important");
     };
     const closeDragElement = () => {
       document.onmouseup = null;
       document.onmousemove = null;
-      handle.style.cursor = "grab";
+      handle.style.setProperty("cursor", "grab", "important");
     };
   }
 
@@ -167,14 +180,19 @@ class ElementorDXColorImporter {
     document.getElementById("dx-btn-minimize").onclick = (e) => {
       e.preventDefault();
       const body = document.getElementById("dx-color-body");
-      body.style.display = body.style.display === "none" ? "block" : "none";
+      body.style.setProperty(
+        "display",
+        body.style.display === "none" ? "block" : "none",
+        "important",
+      );
     };
 
     document.getElementById("dx-btn-prompt").onclick = (e) => {
       e.preventDefault();
-      const aiPrompt = `Generate a complete design token color palette from my brand colors.\nRequirements:\n- Use Tailwind CSS's 50–950 tonal scale.\n- Output colors using rgba(r, g, b, 1), NOT hex.\n- Return ONLY a valid JSON array.`;
       navigator.clipboard
-        .writeText(aiPrompt)
+        .writeText(
+          `Generate a complete design token color palette from my brand colors.\nRequirements:\n- Use Tailwind CSS's 50–950 tonal scale.\n- Output colors using rgba(r, g, b, 1), NOT hex.\n- Return ONLY a valid JSON array.`,
+        )
         .then(() => this.showStatus("Prompt copied!", "success"));
     };
 
@@ -205,12 +223,12 @@ class ElementorDXColorImporter {
     tabUi.onclick = (e) => {
       e.preventDefault();
       this.currentView = "ui";
-      viewUi.style.display = "block";
-      viewRaw.style.display = "none";
-      tabUi.style.background = "#F2ADF3";
-      tabUi.style.color = "#2A0624";
-      tabRaw.style.background = "#222";
-      tabRaw.style.color = "#aaa";
+      viewUi.style.setProperty("display", "block", "important");
+      viewRaw.style.setProperty("display", "none", "important");
+      tabUi.style.setProperty("background", "#F2ADF3", "important");
+      tabUi.style.setProperty("color", "#2A0624", "important");
+      tabRaw.style.setProperty("background", "#222", "important");
+      tabRaw.style.setProperty("color", "#aaa", "important");
       const colors = this.parseColors();
       if (colors) {
         this.processColorsArray(colors);
@@ -222,12 +240,12 @@ class ElementorDXColorImporter {
     tabRaw.onclick = (e) => {
       e.preventDefault();
       this.currentView = "raw";
-      viewUi.style.display = "none";
-      viewRaw.style.display = "block";
-      tabRaw.style.background = "#F2ADF3";
-      tabRaw.style.color = "#2A0624";
-      tabUi.style.background = "#222";
-      tabUi.style.color = "#aaa";
+      viewUi.style.setProperty("display", "none", "important");
+      viewRaw.style.setProperty("display", "block", "important");
+      tabRaw.style.setProperty("background", "#F2ADF3", "important");
+      tabRaw.style.setProperty("color", "#2A0624", "important");
+      tabUi.style.setProperty("background", "#222", "important");
+      tabUi.style.setProperty("color", "#aaa", "important");
     };
 
     document.getElementById("dx-btn-update").onclick = (e) => {
@@ -379,7 +397,7 @@ class ElementorDXColorImporter {
   formatColor(colorStr, targetFormat) {
     if (targetFormat === "var") return colorStr;
     const div = document.createElement("div");
-    div.style.color = colorStr;
+    div.style.setProperty("color", colorStr, "important");
     document.body.appendChild(div);
     const computed = window.getComputedStyle(div).color;
     document.body.removeChild(div);
@@ -405,14 +423,14 @@ class ElementorDXColorImporter {
     const colors = this.parseColors();
     if (!Array.isArray(colors) || colors.length === 0) {
       grid.innerHTML =
-        '<div style="color:#777; font-size:11px; grid-column: 1 / -1;">No colors found.</div>';
+        '<div style="color:#777 !important; font-size:11px !important; grid-column: 1 / -1 !important;">No colors found.</div>';
       return;
     }
     colors.forEach((c) => {
       if (!c || !c.color) return;
       const swatch = document.createElement("div");
       swatch.className = "dx-color-swatch";
-      swatch.style.background = c.color;
+      swatch.style.setProperty("background", c.color, "important");
       swatch.title = `${c.title || "Color"} (${c.color})`;
       swatch.onclick = () => {
         const mode = document.querySelector(
@@ -464,12 +482,16 @@ class ElementorDXColorImporter {
 
   showStatus(msg, type) {
     const el = document.getElementById("dx-color-status");
-    el.style.display = "block";
-    el.style.color = type === "error" ? "#e74c3c" : "#F2ADF3";
+    el.style.setProperty("display", "block", "important");
+    el.style.setProperty(
+      "color",
+      type === "error" ? "#e74c3c" : "#F2ADF3",
+      "important",
+    );
     el.innerText = msg;
     clearTimeout(this.statusTimer);
     this.statusTimer = setTimeout(() => {
-      el.style.display = "none";
+      el.style.setProperty("display", "none", "important");
     }, 3500);
   }
 }
